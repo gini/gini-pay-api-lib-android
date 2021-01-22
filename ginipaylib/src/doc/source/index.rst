@@ -19,7 +19,6 @@ Table of contents
 
    guides/getting-started
    guides/common-tasks
-   changelog
    see_also
    license
 .. todolist::
