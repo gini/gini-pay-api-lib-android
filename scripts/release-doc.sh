@@ -20,7 +20,7 @@ git_user=$1
 git_password=$2
 
 rm -rf gh-pages
-git clone -b gh-pages https://"$git_user":"$git_password"@github.com/gini/gini-sdk-android.git gh-pages
+git clone -b gh-pages https://"$git_user":"$git_password"@github.com/gini/gini-pay-api-lib-android.git gh-pages
 
 rm -rf gh-pages/*
 cp -a ginisdk/build/docs/* gh-pages/
