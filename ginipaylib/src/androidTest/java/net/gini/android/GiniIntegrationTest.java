@@ -50,7 +50,7 @@ import bolts.Task;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class SdkIntegrationTest {
+public class GiniIntegrationTest {
 
     private Gini gini;
     private String clientId;
@@ -77,7 +77,7 @@ public class SdkIntegrationTest {
 
         resetTrustKit();
 
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -127,7 +127,7 @@ public class SdkIntegrationTest {
 
     @Test
     public void processDocumentWithCustomCache() throws IOException, JSONException, InterruptedException {
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -179,7 +179,7 @@ public class SdkIntegrationTest {
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getTargetContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getTargetContext());
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -208,7 +208,7 @@ public class SdkIntegrationTest {
         // Upload a document to make sure we have a valid user
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getTargetContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getTargetContext());
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -224,10 +224,10 @@ public class SdkIntegrationTest {
                 DocumentTaskManager.DocumentType.INVOICE);
         processDocument(uploadBuilder);
 
-        // Create another sdk instance with a new email domain (to simulate an app update)
+        // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
         String newEmailDomain = "beispiel.com";
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, newEmailDomain).
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, newEmailDomain).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -243,7 +243,7 @@ public class SdkIntegrationTest {
     @Test
     public void publicKeyPinningWithMatchingPublicKey() throws Exception {
         resetTrustKit();
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -262,7 +262,7 @@ public class SdkIntegrationTest {
     @Test
     public void publicKeyPinningWithCustomCache() throws Exception {
         resetTrustKit();
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -284,7 +284,7 @@ public class SdkIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithWrongPublicKey() throws Exception {
         resetTrustKit();
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.wrong_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -329,7 +329,7 @@ public class SdkIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithMultiplePublicKeys() throws Exception {
         resetTrustKit();
-        gini = new SdkBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.multiple_keys_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).

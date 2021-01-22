@@ -26,7 +26,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.XmlRes;
 
-public class SdkBuilder {
+public class GiniBuilder {
 
     private final Context mContext;
 
@@ -62,8 +62,8 @@ public class SdkBuilder {
      * @param clientSecret Your application's client secret for the Gini API.
      * @param emailDomain  The email domain which is used for created Gini users.
      */
-    public SdkBuilder(@NonNull final Context context, @NonNull final String clientId,
-            @NonNull final String clientSecret, @NonNull final String emailDomain) {
+    public GiniBuilder(@NonNull final Context context, @NonNull final String clientId,
+                       @NonNull final String clientSecret, @NonNull final String emailDomain) {
         mContext = context;
         mEmailDomain = emailDomain;
         mClientSecret = clientSecret;
@@ -78,7 +78,7 @@ public class SdkBuilder {
      * @param context        Your application's Context instance (Android).
      * @param sessionManager The SessionManager to use.
      */
-    public SdkBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
+    public GiniBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         mContext = context;
         mSessionManager = sessionManager;
         mGiniApiType = GiniApiType.DEFAULT;
@@ -90,7 +90,7 @@ public class SdkBuilder {
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniBuilder setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -98,10 +98,10 @@ public class SdkBuilder {
     /**
      * Set the base URL of the Gini API. Handy for tests. <b>Usually, you do not use this method</b>.
      *
-     * @param newUrl The URL of the Gini API which is used by the requests of the Gini SDK.
+     * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setApiBaseUrl(@NonNull String newUrl) {
+    public GiniBuilder setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -112,10 +112,10 @@ public class SdkBuilder {
     /**
      * Set the base URL of the Gini User Center API. Handy for tests. <b>Usually, you do not use this method</b>.
      *
-     * @param newUrl The URL of the Gini User Center API which is used by the requests of the Gini SDK.
+     * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniBuilder setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -130,7 +130,7 @@ public class SdkBuilder {
      *
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setGiniApiType(@NonNull final GiniApiType giniApiType) {
+    public GiniBuilder setGiniApiType(@NonNull final GiniApiType giniApiType) {
         mGiniApiType = giniApiType;
         return this;
     }
@@ -142,7 +142,7 @@ public class SdkBuilder {
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniBuilder setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -156,7 +156,7 @@ public class SdkBuilder {
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniBuilder setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -171,7 +171,7 @@ public class SdkBuilder {
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniBuilder setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -180,13 +180,13 @@ public class SdkBuilder {
     }
 
     /**
-     * Set the credentials store which is used by the Gini SDK to store user credentials. If no credentials store is
+     * Set the credentials store which is used by the library to store user credentials. If no credentials store is
      * set, the net.gini.android.authorization.SharedPreferencesCredentialsStore is used by default.
      *
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniBuilder setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -198,7 +198,7 @@ public class SdkBuilder {
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public SdkBuilder setCache(@NonNull Cache cache) {
+    public GiniBuilder setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }

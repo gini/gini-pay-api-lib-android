@@ -61,7 +61,7 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
 
 .. code-block:: java
 
-    import net.gini.android.SdkBuilder;
+    import net.gini.android.GiniBuilder;
     import net.gini.android.DocumentTaskManager;
     
     ...

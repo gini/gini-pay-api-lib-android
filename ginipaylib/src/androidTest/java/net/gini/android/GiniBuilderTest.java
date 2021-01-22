@@ -23,38 +23,38 @@ import bolts.Task;
 
 @SmallTest
 @RunWith(AndroidJUnit4.class)
-public class SdkBuilderTest {
+public class GiniBuilderTest {
 
     @Test
-    public void testBuilderReturnsSdkInstance() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+    public void testBuilderReturnsGiniInstance() {
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         assertNotNull(builder.build());
     }
 
     @Test
-    public void testBuilderReturnsCorrectConfiguredSdkInstance() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
-        Gini sdkInstance = builder.build();
+    public void testBuilderReturnsCorrectConfiguredGiniInstance() {
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        Gini giniInstance = builder.build();
 
-        assertNotNull(sdkInstance.getDocumentTaskManager());
-        assertNotNull(sdkInstance.getCredentialsStore());
+        assertNotNull(giniInstance.getDocumentTaskManager());
+        assertNotNull(giniInstance.getCredentialsStore());
     }
 
     @Test
     public void testBuilderWorksWithAlternativeSessionManager() {
         final SessionManager sessionManager = new NullSessionManager();
 
-        final SdkBuilder builder = new SdkBuilder(getTargetContext(), sessionManager);
-        final Gini sdkInstance = builder.build();
+        final GiniBuilder builder = new GiniBuilder(getTargetContext(), sessionManager);
+        final Gini giniInstance = builder.build();
 
-        assertNotNull(sdkInstance);
-        assertNotNull(sdkInstance.getDocumentTaskManager());
-        assertNotNull(sdkInstance.getCredentialsStore());
+        assertNotNull(giniInstance);
+        assertNotNull(giniInstance.getDocumentTaskManager());
+        assertNotNull(giniInstance.getCredentialsStore());
     }
 
     @Test
     public void testSetWrongConnectionTimeout() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionTimeoutInMs(-1);
             fail("IllegalArgumentException should be thrown");
@@ -64,7 +64,7 @@ public class SdkBuilderTest {
 
     @Test
     public void testSetWrongConnectionMaxNumberOfRetries() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setMaxNumberOfRetries(-1);
             fail("IllegalArgumentException should be thrown");
@@ -74,7 +74,7 @@ public class SdkBuilderTest {
 
     @Test
     public void testSetWrongConnectionBackOffMultiplier() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionBackOffMultiplier(-1);
             fail("IllegalArgumentException should be thrown");
@@ -84,7 +84,7 @@ public class SdkBuilderTest {
 
     @Test
     public void testRetryPolicyWiring() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         builder.setConnectionTimeoutInMs(3333);
         builder.setMaxNumberOfRetries(66);
         builder.setConnectionBackOffMultiplier(1.3636f);
@@ -98,12 +98,12 @@ public class SdkBuilderTest {
 
     @Test
     public void testVolleyCacheConfiguration() {
-        SdkBuilder builder = new SdkBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
+        GiniBuilder builder = new GiniBuilder(getTargetContext(), "clientId", "clientSecret", "@example.com");
         NullCache nullCache = new NullCache();
         builder.setCache(nullCache);
-        Gini sdkInstance = builder.build();
+        Gini giniInstance = builder.build();
 
-        assertSame(sdkInstance.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
+        assertSame(giniInstance.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
     }
 
     private static final class NullCache implements Cache {
