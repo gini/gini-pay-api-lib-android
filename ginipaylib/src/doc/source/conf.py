@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Gini SDK for Android'
+project = u'Gini Pay API lib for Android'
 copyright = u'2014-2015, Gini GmbH'
 
 # The version info for the project you're documenting, acts as replacement for

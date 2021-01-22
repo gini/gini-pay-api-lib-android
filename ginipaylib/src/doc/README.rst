@@ -1,4 +1,4 @@
-Gini SDK for Android documentation
+Gini Pay API lib for Android documentation
 ==================================
 
 How to build from source

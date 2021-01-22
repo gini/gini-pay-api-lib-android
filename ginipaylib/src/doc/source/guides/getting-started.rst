@@ -8,7 +8,7 @@ Getting started
 First of all: Add the Library to your Build
 ===========================================
 
-The gini sdk is provided as a aar archive. You can integrate it in your gradle based project by
+The gini pay api lib is provided as a aar archive. You can integrate it in your gradle based project by
 adding it as dependency. In order to gain access to the aar file, you have to add the Gini Maven
 repository to your build script.
 
@@ -28,18 +28,18 @@ repository to your build script.
         ...
     }
 
-Integrating the Gini SDK
+Integrating the Gini Pay API lib
 ========================
 
 
-The Gini SDK provides the ``Gini`` class which is a façade to all functionality of the Gini SDK. We
+The Gini Pay API lib provides the ``Gini`` class which is a façade to all functionality of the library. We
 recommend using an instance of this class singleton-like. By saying singleton-like we mean that you
 somehow manage to create and keep one instance at application start. Instead of creating a new
 instance every time when you need to interact with the Gini API, you reuse this instance. This has
-the benefits that the SDK can reuse sessions between requests to the Gini API which may save a
+the benefits that the library can reuse sessions between requests to the Gini API which may save a
 noteworthy number of HTTP requests.
 
-Creating the Gini SDK instance
+Creating the Gini instance
 ------------------------------
 
 In order to create an instance of the ``Gini`` class, you need both your client id and your client
@@ -66,7 +66,7 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     
     ...
     
-    // The Gini instance is a facade to all available managers of the Gini SDK. Configure and 
+    // The Gini instance is a facade to all available managers of the library. Configure and
     // create the SDK with the SdkBuilder.
     Gini gini = new SdkBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
             .build();
@@ -74,7 +74,7 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     DocumentTaskManager documentManager = gini.getDocumentTaskManager();
 
 
-Congratulations, you successfully integrated the Gini SDK.
+Congratulations, you successfully integrated the Gini Pay.
 
 Using the Gini Accounting API
 =============================
@@ -104,7 +104,7 @@ Since version 1.5.0 public key pinning is provided using the `Android Network Se
 To use public key pinning you need to create an `Android network security configuration
 <https://developer.android.com/training/articles/security-config.html>`_ xml file. This
 configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
-API Level 17 and 23 the Gini SDK relies on `TrustKit
+API Level 17 and 23 Gini Pay API lib relies on `TrustKit
 <https://github.com/datatheorem/TrustKit-Android>`_. On API Levels 15 and 16 our own pinning
 implementation is used.
 
@@ -115,8 +115,8 @@ limitations for API Levels 17 to 23 <https://github.com/datatheorem/TrustKit-And
 Configure Pinning
 -----------------
 
-The following sample configuration shows how to set the public key pin for the two domains the Gini
-SDK uses by default (``api.gini.net`` and ``user.gini.net``). It should be saved under
+The following sample configuration shows how to set the public key pin for the two domains Gini
+Pay API lib uses by default (``api.gini.net`` and ``user.gini.net``). It should be saved under
 ``res/xml/network_security_config.xml``:
 
 .. code-block:: xml
@@ -145,7 +145,7 @@ SDK uses by default (``api.gini.net`` and ``user.gini.net``). It should be saved
 
 .. note::
 
-    If you set different base urls when instantiating the Gini SDK with the ``SdkBuilder`` make sure
+    If you set different base urls when instantiating Gini with the ``SdkBuilder`` make sure
     you set matching domains in the network security configuration xml.
 
 .. warning::
@@ -182,7 +182,7 @@ the ``<application>`` tag to point to the xml:
 Enable Pinning
 --------------
 
-For the Gini SDK to know about the xml you need to set the xml resource id using the
+For the library to know about the xml you need to set the xml resource id using the
 ``SdkBuilder#setNetworkSecurityConfigResId()`` method:
 
 .. code-block:: java

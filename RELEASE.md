@@ -1,6 +1,6 @@
 # Release Process
 
-This document describes the release process for a new version of the Gini SDK for Android.
+This document describes the release process for a new version of the Gini Pay API lib for Android.
 
 * Add new features only in separate `feature` branches
 * Merge `feature` branches into `develop` using a PR
