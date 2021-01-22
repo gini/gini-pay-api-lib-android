@@ -8,7 +8,7 @@ export CLASSPATH=$CLASSPATH:$1/tools/doccheck-doclet/tools.jar
 javadoc \
     -doclet com.sun.tools.doclets.doccheck.DocCheck \
     -docletpath $1/tools/doccheck-doclet/doccheck.jar \
-    -sourcepath $1/ginisdk/src/main/java \
+    -sourcepath $1/ginipaylib/src/main/java \
     -subpackages net.gini.android \
     -encoding "UTF-8" \
     -d $2

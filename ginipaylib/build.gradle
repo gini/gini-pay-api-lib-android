@@ -126,7 +126,7 @@ android.libraryVariants.all { variant ->
 }
 
 artifacts {
-    upload file('build/outputs/aar/ginisdk-release.aar')
+    upload file('build/outputs/aar/ginipaylib-release.aar')
 }
 
 android.libraryVariants.all { variant ->
@@ -135,13 +135,13 @@ android.libraryVariants.all { variant ->
         dependsOn "jar${variant.name.capitalize()}"
         dependsOn "generate${variant.name.capitalize()}Javadoc"
 
-        baseName "ginisdk"
+        baseName "ginipaylib"
         version android.defaultConfig.versionName
         classifier variant.name
         from files(buildDir, buildDir.getPath() + '/libs')
-        include("ginisdk-${variant.name}.jar")
+        include("ginipaylib-${variant.name}.jar")
         include 'LICENSE'
-        rename("ginisdk-${variant.name}.jar", "ginisdk-${android.defaultConfig.versionName}.jar");
+        rename("ginipaylib-${variant.name}.jar", "ginipaylib-${android.defaultConfig.versionName}.jar");
 
         from(fullDocumentationDir(variant)) {
             into "doc-" + android.defaultConfig.versionName;
