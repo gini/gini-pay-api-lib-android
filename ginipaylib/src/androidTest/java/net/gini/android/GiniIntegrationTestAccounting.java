@@ -1,19 +1,7 @@
 package net.gini.android;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-
-import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.test.filters.LargeTest;
 import android.support.test.filters.SdkSuppress;
@@ -22,11 +10,11 @@ import android.util.Log;
 
 import com.android.volley.toolbox.NoCache;
 
-import net.gini.android.DocumentTaskManager.DocumentUploadBuilder;
 import net.gini.android.authorization.EncryptedCredentialsStore;
 import net.gini.android.authorization.UserCredentials;
 import net.gini.android.helpers.TestUtils;
 import net.gini.android.models.Document;
+import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.SpecificExtraction;
 
 import org.json.JSONException;
@@ -44,6 +32,14 @@ import java.util.Properties;
 import bolts.Continuation;
 import bolts.Task;
 
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class GiniIntegrationTestAccounting {
@@ -54,6 +50,8 @@ public class GiniIntegrationTestAccounting {
     private String apiUriAccounting;
     private String userCenterUri;
     private InputStream testDocumentAsStream;
+    private final DocumentTaskManager.DocumentType documentType = DocumentTaskManager.DocumentType.INVOICE;
+    private final String filename = "test.jpg";
 
     @Before
     public void setUp() throws Exception {
@@ -72,7 +70,7 @@ public class GiniIntegrationTestAccounting {
         Log.d("TEST", "testApiUriAccounting " + apiUriAccounting);
         Log.d("TEST", "testUserCenterUri " + userCenterUri);
 
-        testDocumentAsStream = assetManager.open("test.jpg");
+        testDocumentAsStream = assetManager.open(filename);
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
         resetTrustKit();
@@ -92,26 +90,9 @@ public class GiniIntegrationTestAccounting {
     }
 
     @Test
-    public void deprecatedProcessDocumentBitmap() throws IOException, InterruptedException, JSONException {
-        final Bitmap testDocument = BitmapFactory.decodeStream(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder(testDocument).setDocumentType("RemittanceSlip");
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
-    }
-
-    @Test
-    public void processDocumentBitmap() throws IOException, InterruptedException, JSONException {
-        final Bitmap testDocument = BitmapFactory.decodeStream(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBitmap(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
-    }
-
-    @Test
     public void processDocumentByteArray() throws IOException, InterruptedException, JSONException {
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, DocumentTaskManager.DocumentType.INVOICE);
     }
 
     @Test
@@ -125,18 +106,14 @@ public class GiniIntegrationTestAccounting {
                 build();
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
     }
 
     @Test
     public void sendFeedback() throws Exception {
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = analyzeDocumentAndAssertExtractions(
-                uploadBuilder);
+        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = analyzeDocumentAndAssertExtractions(testDocument, filename,
+                documentType);
         final Document document = documentExtractions.keySet().iterator().next();
         final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next();
 
@@ -171,10 +148,8 @@ public class GiniIntegrationTestAccounting {
         UserCredentials invalidUserCredentials = new UserCredentials("invalid@example.com", "1234");
         credentialsStore.storeUserCredentials(invalidUserCredentials);
 
-        final Bitmap testDocument = BitmapFactory.decodeStream(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBitmap(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
 
         // Verify that a new user was created
         assertNotSame(invalidUserCredentials.getUsername(), credentialsStore.getUserCredentials().getUsername());
@@ -193,10 +168,8 @@ public class GiniIntegrationTestAccounting {
                 setCredentialsStore(credentialsStore).
                 build();
 
-        final Bitmap testDocument = BitmapFactory.decodeStream(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBitmap(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
 
         // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
@@ -209,7 +182,7 @@ public class GiniIntegrationTestAccounting {
                 setCredentialsStore(credentialsStore).
                 build();
 
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
 
         UserCredentials newUserCredentials = credentialsStore.getUserCredentials();
         assertEquals(newEmailDomain, extractEmailDomain(newUserCredentials.getUsername()));
@@ -226,9 +199,7 @@ public class GiniIntegrationTestAccounting {
                 build();
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
     }
 
     @Test
@@ -243,9 +214,7 @@ public class GiniIntegrationTestAccounting {
                 build();
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
     }
 
     @Test
@@ -260,11 +229,9 @@ public class GiniIntegrationTestAccounting {
                 build();
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
         final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
 
-        final Task<Document> upload = uploadBuilder.upload(documentTaskManager);
+        final Task<Document> upload = documentTaskManager.createDocument(testDocument, filename, documentType);
         final Task<Document> processDocument = upload.onSuccessTask(new Continuation<Document, Task<Document>>() {
             @Override
             public Task<Document> then(Task<Document> task) throws Exception {
@@ -273,11 +240,11 @@ public class GiniIntegrationTestAccounting {
             }
         });
 
-        final Task<Map<String, SpecificExtraction>> retrieveExtractions = processDocument.onSuccessTask(
-                new Continuation<Document, Task<Map<String, SpecificExtraction>>>() {
+        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
+                new Continuation<Document, Task<ExtractionsContainer>>() {
                     @Override
-                    public Task<Map<String, SpecificExtraction>> then(Task<Document> task) throws Exception {
-                        return documentTaskManager.getExtractions(task.getResult());
+                    public Task<ExtractionsContainer> then(Task<Document> task) throws Exception {
+                        return documentTaskManager.getAllExtractions(task.getResult());
                     }
                 });
 
@@ -301,9 +268,7 @@ public class GiniIntegrationTestAccounting {
                 build();
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentUploadBuilder uploadBuilder = new DocumentUploadBuilder().setDocumentBytes(testDocument).setDocumentType(
-                DocumentTaskManager.DocumentType.INVOICE);
-        analyzeDocumentAndAssertExtractions(uploadBuilder);
+        analyzeDocumentAndAssertExtractions(testDocument, filename, documentType);
     }
 
     private String extractEmailDomain(String email) {
@@ -314,11 +279,11 @@ public class GiniIntegrationTestAccounting {
         return "";
     }
 
-    private Map<Document, Map<String, SpecificExtraction>> analyzeDocumentAndAssertExtractions(DocumentUploadBuilder uploadBuilder)
+    private Map<Document, Map<String, SpecificExtraction>> analyzeDocumentAndAssertExtractions(byte[] documentBytes, String filename, DocumentTaskManager.DocumentType documentType)
             throws InterruptedException, JSONException {
         final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
 
-        final Task<Document> upload = uploadBuilder.upload(documentTaskManager);
+        final Task<Document> upload = documentTaskManager.createDocument(documentBytes, filename, documentType);
         final Task<Document> processDocument = upload.onSuccessTask(new Continuation<Document, Task<Document>>() {
             @Override
             public Task<Document> then(Task<Document> task) throws Exception {
@@ -327,11 +292,11 @@ public class GiniIntegrationTestAccounting {
             }
         });
 
-        final Task<Map<String, SpecificExtraction>> retrieveExtractions = processDocument.onSuccessTask(
-                new Continuation<Document, Task<Map<String, SpecificExtraction>>>() {
+        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
+                new Continuation<Document, Task<ExtractionsContainer>>() {
                     @Override
-                    public Task<Map<String, SpecificExtraction>> then(Task<Document> task) throws Exception {
-                        return documentTaskManager.getExtractions(task.getResult());
+                    public Task<ExtractionsContainer> then(Task<Document> task) throws Exception {
+                        return documentTaskManager.getAllExtractions(task.getResult());
                     }
                 });
 
@@ -342,7 +307,7 @@ public class GiniIntegrationTestAccounting {
 
         assertFalse("extractions should have succeeded", retrieveExtractions.isFaulted());
 
-        final Map<String, SpecificExtraction> extractions = retrieveExtractions.getResult();
+        final Map<String, SpecificExtraction> extractions = retrieveExtractions.getResult().getSpecificExtractions();
 
         assertEquals("Amount to pay should be found", "1.00:EUR", extractions.get("amountToPay").getValue());
         assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("senderName").getValue());

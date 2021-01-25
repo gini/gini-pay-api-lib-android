@@ -89,9 +89,13 @@ public class DocumentTaskManagerTest {
     }
 
     private byte[] createByteArray() throws IOException {
+        return createByteArray("yoda.jpg");
+    }
+
+    private byte[] createByteArray(String filename) throws IOException {
         AssetManager assetManager = getTargetContext().getResources().getAssets();
 
-        InputStream inputStream = assetManager.open("yoda.jpg");
+        InputStream inputStream = assetManager.open(filename);
         return TestUtils.createByteArray(inputStream);
     }
 
@@ -187,9 +191,7 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateDocumentReturnsTask() throws IOException {
-        Bitmap bitmap = createBitmap();
-
-        assertNotNull(mDocumentTaskManager.createDocument(bitmap, "foobar.jpg", "invoice", 85));
+        assertNotNull(mDocumentTaskManager.createDocument(createByteArray(), "foobar.jpg", DocumentType.INVOICE));
     }
 
     @Test
@@ -200,9 +202,8 @@ public class DocumentTaskManagerTest {
                 .thenReturn(Task.forResult(createdDocumentUri));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
-        Bitmap bitmap = createBitmap();
 
-        Task<Document> documentTask = mDocumentTaskManager.createDocument(bitmap, "foobar.jpg", "invoice", 95);
+        Task<Document> documentTask = mDocumentTaskManager.createPartialDocument(createByteArray(), "image/jpeg", "yoda.jpeg", DocumentType.INVOICE);
         documentTask.waitForCompletion();
 
         assertNotNull(documentTask.getResult());
@@ -218,11 +219,11 @@ public class DocumentTaskManagerTest {
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
-        Bitmap bitmap = createBitmap();
-        mDocumentTaskManager.createDocument(bitmap, "foobar.jpg", "invoice", 90).waitForCompletion();
+        mDocumentTaskManager.createPartialDocument(new byte[]{}, MediaTypes.IMAGE_JPEG, "foobar.jpg", DocumentType.INVOICE)
+                .waitForCompletion();
 
         verify(mApiCommunicator)
-                .uploadDocument(any(byte[].class), eq(MediaTypes.IMAGE_JPEG), eq("foobar.jpg"), eq("invoice"),
+                .uploadDocument(any(byte[].class), eq("application/vnd.gini.v2.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
     }
 
@@ -442,85 +443,13 @@ public class DocumentTaskManagerTest {
     }
 
     @Test
-    public void testDeprecatedDocumentBuilderPassesThroughArguments() throws IOException {
-        final DocumentTaskManager documentTaskManager = Mockito.mock(DocumentTaskManager.class);
-
-        Bitmap bitmap = createBitmap();
-        DocumentTaskManager.DocumentUploadBuilder documentUploadBuilder =
-                new DocumentTaskManager.DocumentUploadBuilder(bitmap);
-        documentUploadBuilder.setDocumentType("invoice");
-        documentUploadBuilder.setFilename("foobar.jpg");
-        documentUploadBuilder.setCompressionRate(12);
-        documentUploadBuilder.upload(documentTaskManager);
-
-        verify(documentTaskManager).createDocument(bitmap, "foobar.jpg", "invoice", 12);
-    }
-
-    @Test
-    public void testDocumentBuilderPassesThroughArguments() throws IOException {
-        final DocumentTaskManager documentTaskManager = Mockito.mock(DocumentTaskManager.class);
-
-        Bitmap bitmap = createBitmap();
-        DocumentTaskManager.DocumentUploadBuilder documentUploadBuilder =
-                new DocumentTaskManager.DocumentUploadBuilder()
-                        .setDocumentBitmap(bitmap)
-                        .setDocumentType(DocumentType.INVOICE)
-                        .setFilename("foobar.jpg");
-        documentUploadBuilder.upload(documentTaskManager);
-
-        verify(documentTaskManager).createDocument(bitmap, "foobar.jpg", DocumentType.INVOICE);
-    }
-
-    @Test
-    public void testDocumentBuilderPassesThroughByteArray() throws IOException {
-        final DocumentTaskManager documentTaskManager = Mockito.mock(DocumentTaskManager.class);
-
-        byte[] byteArray = createByteArray();
-        DocumentTaskManager.DocumentUploadBuilder documentUploadBuilder =
-                new DocumentTaskManager.DocumentUploadBuilder()
-                        .setDocumentBytes(byteArray)
-                        .setDocumentType(DocumentType.INVOICE)
-                        .setFilename("foobar.jpg");
-        documentUploadBuilder.upload(documentTaskManager);
-
-        verify(documentTaskManager).createDocument(byteArray, "foobar.jpg", DocumentType.INVOICE);
-    }
-
-    @Test
-    public void testDocumentBuilderPassesBitmapInsteadOfByteArray() throws IOException {
-        final DocumentTaskManager documentTaskManager = Mockito.mock(DocumentTaskManager.class);
-
-        byte[] byteArray = createByteArray();
-        Bitmap bitmap = createBitmap();
-        DocumentTaskManager.DocumentUploadBuilder documentUploadBuilder =
-                new DocumentTaskManager.DocumentUploadBuilder()
-                        .setDocumentBytes(byteArray)
-                        .setDocumentBitmap(bitmap)
-                        .setDocumentType(DocumentType.INVOICE)
-                        .setFilename("foobar.jpg");
-        documentUploadBuilder.upload(documentTaskManager);
-
-        verify(documentTaskManager).createDocument(bitmap, "foobar.jpg", DocumentType.INVOICE);
-    }
-
-    @Test
-    public void testDocumentBuilderHasDefaultValues() throws IOException {
-        final DocumentTaskManager documentTaskManager = Mockito.mock(DocumentTaskManager.class);
-
-        Bitmap bitmap = createBitmap();
-        new DocumentTaskManager.DocumentUploadBuilder().setDocumentBitmap(bitmap).upload(documentTaskManager);
-
-        verify(documentTaskManager).createDocument(bitmap, null, null, DocumentTaskManager.DEFAULT_COMPRESSION);
-    }
-
-    @Test
     public void testGetExtractionsReturnsTask() throws IOException, JSONException {
         when(mApiCommunicator.getExtractions(eq("1234"), any(Session.class))).thenReturn(createExtractionsJSONTask());
         Document document = new Document("1234", Document.ProcessingState.COMPLETED, "foobar", 1, new Date(),
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
 
-        assertNotNull(mDocumentTaskManager.getExtractions(document));
+        assertNotNull(mDocumentTaskManager.getAllExtractions(document));
     }
 
     @Test
@@ -530,12 +459,12 @@ public class DocumentTaskManagerTest {
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
 
-        Task<Map<String, SpecificExtraction>> extractionsTask = mDocumentTaskManager.getExtractions(document);
+        Task<ExtractionsContainer> extractionsTask = mDocumentTaskManager.getAllExtractions(document);
         extractionsTask.waitForCompletion();
         if (extractionsTask.isFaulted()) {
             throw extractionsTask.getError();
         }
-        final Map<String, SpecificExtraction> extractions = extractionsTask.getResult();
+        final Map<String, SpecificExtraction> extractions = extractionsTask.getResult().getSpecificExtractions();
         assertNotNull(extractions);
         final SpecificExtraction amountToPay = extractions.get("amountToPay");
         assertNotNull(amountToPay);

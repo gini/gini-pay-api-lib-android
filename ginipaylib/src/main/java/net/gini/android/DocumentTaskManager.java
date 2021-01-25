@@ -1,12 +1,9 @@
 package net.gini.android;
 
-import static android.graphics.Bitmap.CompressFormat.JPEG;
-
-import static net.gini.android.Utils.CHARSET_UTF8;
-import static net.gini.android.Utils.checkNotNull;
-
-import android.graphics.Bitmap;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.gini.android.authorization.Session;
 import net.gini.android.authorization.SessionManager;
@@ -22,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,10 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import bolts.Continuation;
 import bolts.Task;
+
+import static net.gini.android.Utils.CHARSET_UTF8;
+import static net.gini.android.Utils.checkNotNull;
 
 /**
  * The DocumentTaskManager is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
@@ -392,190 +389,6 @@ public class DocumentTaskManager {
                     @Override
                     public Task<Document> then(Task<Uri> uploadTask) throws Exception {
                         return getDocument(uploadTask.getResult());
-                    }
-                }, Task.BACKGROUND_EXECUTOR);
-    }
-
-    /**
-     * Uploads the given photo of a document and creates a new Gini document.
-     *
-     * @param document        A Bitmap representing the image
-     * @param filename        Optional the filename of the given document.
-     * @param documentType    Optional a document type hint. See the documentation for the document type hints for
-     *                        possible values.
-     * @param compressionRate Optional the compression rate of the created JPEG representation of the document.
-     *                        Between 0 and 90.
-     *
-     * @return A Task which will resolve to the Document instance of the freshly created document.
-     *
-     * @deprecated If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     * <p>
-     * If using the accounting Gini API, then use {@link #createDocument(byte[], String, DocumentType)}.
-     */
-    @Deprecated
-    public Task<Document> createDocument(@NonNull final Bitmap document, @Nullable final String filename,
-            @Nullable final String documentType, final int compressionRate) {
-        return createDocumentInternal(document, filename, documentType, compressionRate, null);
-    }
-
-    /**
-     * Uploads the given photo of a document and creates a new Gini document.
-     *
-     * @param document          A Bitmap representing the image
-     * @param filename          Optional the filename of the given document.
-     * @param documentType      Optional a document type hint. See the documentation for the document type hints for
-     *                          possible values.
-     * @param compressionRate   Optional the compression rate of the created JPEG representation of the document.
-     *                          Between 0 and 90.
-     * @param documentMetadata  Additional information related to the document (e.g. the branch id
-     *                          to which the client app belongs)
-     *
-     * @return A Task which will resolve to the Document instance of the freshly created document.
-     *
-     * @deprecated If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType, DocumentMetadata)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     * <p>
-     * If using the accounting Gini API, then use {@link #createDocument(byte[], String, DocumentType, DocumentMetadata)}.
-     */
-    @Deprecated
-    public Task<Document> createDocument(@NonNull final Bitmap document, @Nullable final String filename,
-            @Nullable final String documentType, final int compressionRate, @NonNull final DocumentMetadata documentMetadata) {
-        return createDocumentInternal(document, filename, documentType, compressionRate, documentMetadata);
-    }
-
-    /**
-     * Uploads the given photo of a document and creates a new Gini document.
-     *
-     * @param document        A Bitmap representing the image
-     * @param filename        Optional the filename of the given document.
-     * @param documentType    Optional a document type hint.
-     *
-     * @return A Task which will resolve to the Document instance of the freshly created document.
-     *
-     * @deprecated If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     * <p>
-     * If using the accounting Gini API, then use {@link #createDocument(byte[], String, DocumentType)}.
-     */
-    public Task<Document> createDocument(@NonNull final Bitmap document, @Nullable final String filename,
-            @Nullable final DocumentType documentType) {
-        String apiDoctypeHint = null;
-        if (documentType != null) {
-            apiDoctypeHint = documentType.getApiDoctypeHint();
-        }
-        return createDocumentInternal(document, filename, apiDoctypeHint, DEFAULT_COMPRESSION, null);
-    }
-
-    /**
-     * Uploads the given photo of a document and creates a new Gini document.
-     *
-     * @param document          A Bitmap representing the image
-     * @param filename          Optional the filename of the given document.
-     * @param documentType      Optional a document type hint.
-     * @param documentMetadata  Additional information related to the document (e.g. the branch id
-     *                          to which the client app belongs)
-     *
-     * @return A Task which will resolve to the Document instance of the freshly created document.
-     *
-     * @deprecated If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType, DocumentMetadata)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     * <p>
-     * If using the accounting Gini API, then use {@link #createDocument(byte[], String, DocumentType, DocumentMetadata)}.
-     */
-    public Task<Document> createDocument(@NonNull final Bitmap document, @Nullable final String filename,
-            @Nullable final DocumentType documentType, @NonNull final DocumentMetadata documentMetadata) {
-        String apiDoctypeHint = null;
-        if (documentType != null) {
-            apiDoctypeHint = documentType.getApiDoctypeHint();
-        }
-        return createDocumentInternal(document, filename, apiDoctypeHint, DEFAULT_COMPRESSION,
-                documentMetadata);
-    }
-
-    private Task<Document> createDocumentInternal(@NonNull final Bitmap document, @Nullable final String filename,
-            @Nullable final String apiDoctypeHint, final int compressionRate,
-            @Nullable final DocumentMetadata documentMetadata) {
-        return createDocumentInternal(new Continuation<Session, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(Task<Session> sessionTask) throws Exception {
-                final Session session = sessionTask.getResult();
-                final ByteArrayOutputStream documentOutputStream = new ByteArrayOutputStream();
-                document.compress(JPEG, compressionRate, documentOutputStream);
-                final byte[] uploadData = documentOutputStream.toByteArray();
-                return mApiCommunicator
-                        .uploadDocument(uploadData, MediaTypes.IMAGE_JPEG, filename, apiDoctypeHint, session, documentMetadata);
-            }
-        });
-    }
-
-    /**
-     * Get the extractions for the given document.
-     *
-     * @param document The Document instance for whose document the extractions are returned.
-     *
-     * @return A Task which will resolve to a mapping, where the key is a String with the name of the
-     * specific. See the
-     * <a href="http://developer.gini.net/gini-api/html/document_extractions.html">Gini API documentation</a>
-     * for a list of the names of the specific extractions.
-     *
-     * @deprecated Use {@link #getAllExtractions(Document)} instead to be able to receive compound extractions, too.
-     */
-    public Task<Map<String, SpecificExtraction>> getExtractions(@NonNull final Document document) {
-        final String documentId = document.getId();
-        return mSessionManager.getSession()
-                .onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-                    @Override
-                    public Task<JSONObject> then(Task<Session> sessionTask) {
-                        final Session session = sessionTask.getResult();
-                        return mApiCommunicator.getExtractions(documentId, session);
-                    }
-                }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, Map<String, SpecificExtraction>>() {
-                    @Override
-                    public Map<String, SpecificExtraction> then(Task<JSONObject> task) throws Exception {
-                        final JSONObject responseData = task.getResult();
-                        final JSONObject candidatesData = responseData.getJSONObject("candidates");
-                        HashMap<String, List<Extraction>> candidates =
-                                extractionCandidatesFromApiResponse(candidatesData);
-
-                        final HashMap<String, SpecificExtraction> extractionsByName =
-                                new HashMap<String, SpecificExtraction>();
-                        final JSONObject extractionsData = responseData.getJSONObject("extractions");
-                        @SuppressWarnings("unchecked")
-                        // Quote Android Source: "/* Return a raw type for API compatibility */"
-                        final Iterator<String> extractionsNameIterator = extractionsData.keys();
-                        while (extractionsNameIterator.hasNext()) {
-                            final String extractionName = extractionsNameIterator.next();
-                            final JSONObject extractionData = extractionsData.getJSONObject(extractionName);
-                            final Extraction extraction = extractionFromApiResponse(extractionData);
-                            List<Extraction> candidatesForExtraction = new ArrayList<Extraction>();
-                            if (extractionData.has("candidates")) {
-                                final String candidatesName = extractionData.getString("candidates");
-                                if (candidates.containsKey(candidatesName)) {
-                                    candidatesForExtraction = candidates.get(candidatesName);
-                                }
-                            }
-                            final SpecificExtraction specificExtraction =
-                                    new SpecificExtraction(extractionName, extraction.getValue(),
-                                            extraction.getEntity(), extraction.getBox(),
-                                            candidatesForExtraction);
-                            extractionsByName.put(extractionName, specificExtraction);
-                        }
-
-                        return extractionsByName;
                     }
                 }, Task.BACKGROUND_EXECUTOR);
     }
@@ -979,111 +792,5 @@ public class DocumentTaskManager {
             box = Box.fromApiResponse(responseData.getJSONObject("box"));
         }
         return new Extraction(value, entity, box);
-    }
-
-
-    /**
-     * A builder to configure the upload of a bitmap.
-     */
-    public static class DocumentUploadBuilder {
-
-        private byte[] mDocumentBytes;
-        private Bitmap mDocumentBitmap;
-        private String mFilename;
-        private String mDocumentType;
-        private DocumentType mDocumentTypeHint;
-        private int mCompressionRate;
-
-        public DocumentUploadBuilder() {
-            mCompressionRate = DocumentTaskManager.DEFAULT_COMPRESSION;
-        }
-
-        /**
-         * @deprecated Use {@link #DocumentUploadBuilder()} instead.
-         *
-         * @param documentBitmap A Bitmap representing the image.
-         */
-        @Deprecated
-        public DocumentUploadBuilder(@NonNull final Bitmap documentBitmap) {
-            mDocumentBitmap = documentBitmap;
-            mCompressionRate = DocumentTaskManager.DEFAULT_COMPRESSION;
-        }
-
-        /**
-         * Set the document as a byte array. If a {@link Bitmap} was also set, the bitmap will be used.
-         */
-        public DocumentUploadBuilder setDocumentBytes(@NonNull byte[] documentBytes) {
-            this.mDocumentBytes = documentBytes;
-            return this;
-        }
-
-        /**
-         * Set the document as a {@link Bitmap}. This bitmap will be used instead of the byte array, if both were set.
-         */
-        public DocumentUploadBuilder setDocumentBitmap(@NonNull Bitmap documentBitmap) {
-            this.mDocumentBitmap = documentBitmap;
-            return this;
-        }
-
-        /**
-         * Set the document' s filename.
-         */
-        public DocumentUploadBuilder setFilename(@NonNull final String filename) {
-            mFilename = filename;
-            return this;
-        }
-
-        /**
-         * Set the document's type. (This feature is called document type hint in the Gini API documentation). By
-         * providing the doctype, Gini’s document processing is optimized in many ways.
-         *
-         * @deprecated Use {@link #setDocumentType(DocumentType)} instead.
-         */
-        @Deprecated
-        public DocumentUploadBuilder setDocumentType(@NonNull final String documentType) {
-            mDocumentType = documentType;
-            return this;
-        }
-
-        /**
-         * Set the document's type. (This feature is called document type hint in the Gini API documentation). By
-         * providing the doctype, Gini’s document processing is optimized in many ways.
-         */
-        public DocumentUploadBuilder setDocumentType(@NonNull final DocumentType documentType) {
-            mDocumentTypeHint = documentType;
-            return this;
-        }
-
-        /**
-         * The bitmap (if set) will be converted into a JPEG representation. Set the compression rate for the JPEG
-         * representation.
-         *
-         * @deprecated The default compression rate is set to get the best extractions for the smallest image byte size.
-         */
-        @Deprecated
-        public DocumentUploadBuilder setCompressionRate(final int compressionRate) {
-            mCompressionRate = compressionRate;
-            return this;
-        }
-
-        /**
-         * Use the given DocumentTaskManager instance to upload the document with all the features which were set with
-         * this builder.
-         *
-         * @param documentTaskManager The instance of a DocumentTaskManager whill will be used to upload the document.
-         *
-         * @return A task which will resolve to a Document instance.
-         */
-        public Task<Document> upload(@NonNull final DocumentTaskManager documentTaskManager) {
-            if (mDocumentBitmap != null) {
-                if (mDocumentTypeHint != null) {
-                    return documentTaskManager.createDocument(mDocumentBitmap, mFilename, mDocumentTypeHint);
-                } else {
-                    return documentTaskManager.createDocument(mDocumentBitmap, mFilename, mDocumentType, mCompressionRate);
-                }
-            } else {
-                return documentTaskManager.createDocument(mDocumentBytes, mFilename, mDocumentTypeHint);
-            }
-        }
     }
 }
