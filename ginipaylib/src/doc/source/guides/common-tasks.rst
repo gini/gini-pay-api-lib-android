@@ -46,7 +46,6 @@ The following example shows how to create a new document from a byte array conta
             }
         });
 
-In version 2.0.0 we introduced *partial documents* to allow scanning documents with multiple pages.
 Each page of a document needs to uploaded as a partial document. In addition documents consisting of
 one page also should be uploaded as a partial document.
 
@@ -67,7 +66,7 @@ upload. For retrieving extractions see :ref:`getting-extractions`.
 .. note::
     
     The filename (``myFirstDocument.jpg`` in the example) is not required, it could be ``null``, but
-    setting a filename is a good praxis for human readable document identification.
+    setting a filename is a good practice for human readable document identification.
 
 Setting the document type hint
 ------------------------------
@@ -83,9 +82,9 @@ Getting extractions
 ===================
 
 After you have successfully created the partial documents, you most likely want to get the
-extractions for the document. In version 2.0.0 we introduced *composite documents* which consist of
+extractions for the document. *Composite documents* consist of
 previously created *partial documents*. You can consider creating partial documents analogous to
-uploading pages of a document and creating a composite document analogous to processing those page
+uploading pages of a document and creating a composite document analogous to processing those pages
 as a single document.
 
 .. warning::
@@ -202,6 +201,6 @@ Handling errors
 ===================
 
 Currently, the Gini Pay API lib doesn't have intelligent error-handling mechanisms. All errors that
-occure during executing a task are handed over transparently. You can react on those errors in the
+occur during executing a task are handed over transparently. You can react on those errors in the
 ``onError(...)`` method of the task. We may add better error-handling mechanisms in the future. At
 the moment we recommend checking the network status when a task failed and retrying the task.
