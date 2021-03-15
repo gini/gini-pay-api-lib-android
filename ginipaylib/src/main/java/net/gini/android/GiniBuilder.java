@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
+import com.squareup.moshi.Moshi;
 
 import net.gini.android.authorization.AnonymousSessionManager;
 import net.gini.android.authorization.CredentialsStore;
@@ -40,6 +41,7 @@ public class GiniBuilder {
     private int mNetworkSecurityConfigResId;
 
     private ApiCommunicator mApiCommunicator;
+    private Moshi mMoshi;
     private RequestQueue mRequestQueue;
     private DocumentTaskManager mDocumentTaskManager;
     private SessionManager mSessionManager;
@@ -269,6 +271,19 @@ public class GiniBuilder {
     }
 
     /**
+     * Helper method to create (and store) the ApiCommunicator instance which is used to do the requests to the Gini API.
+     *
+     * @return The ApiCommunicator instance.
+     */
+    @NonNull
+    private synchronized Moshi getMoshi() {
+        if (mMoshi == null) {
+            mMoshi = new Moshi.Builder().build();
+        }
+        return mMoshi;
+    }
+
+    /**
      * Helper method to create (and store) the instance of the CredentialsStore implementation which is used to store
      * user credentials. If the credentials store was previously configured via the builder, the previously configured
      * instance is used. Otherwise, a net.gini.android.authorization.EncryptedCredentialsStore instance is
@@ -343,7 +358,7 @@ public class GiniBuilder {
     private synchronized DocumentTaskManager getDocumentTaskManager() {
         if (mDocumentTaskManager == null) {
             mDocumentTaskManager = new DocumentTaskManager(getApiCommunicator(),
-                    getSessionManager(), mGiniApiType);
+                    getSessionManager(), mGiniApiType, getMoshi());
         }
         return mDocumentTaskManager;
     }

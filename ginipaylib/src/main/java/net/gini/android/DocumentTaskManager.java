@@ -5,6 +5,10 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
+
 import net.gini.android.authorization.Session;
 import net.gini.android.authorization.SessionManager;
 import net.gini.android.models.Box;
@@ -12,13 +16,17 @@ import net.gini.android.models.CompoundExtraction;
 import net.gini.android.models.Document;
 import net.gini.android.models.Extraction;
 import net.gini.android.models.ExtractionsContainer;
+import net.gini.android.models.PaymentProvider;
+import net.gini.android.models.PaymentProviderKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.response.PaymentProviderResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,16 +89,22 @@ public class DocumentTaskManager {
      * The ApiCommunicator instance which is used to communicate with the Gini API.
      */
     final ApiCommunicator mApiCommunicator;  // Visible for testing
+
+    /**
+     * The ApiCommunicator instance which is used to communicate with the Gini API.
+     */
+    private final Moshi mMoshi;  // Visible for testing
     /**
      * The SessionManager instance which is used to create the documents.
      */
     private final SessionManager mSessionManager;
 
     public DocumentTaskManager(final ApiCommunicator apiCommunicator, final SessionManager sessionManager,
-            final GiniApiType giniApiType) {
+                               final GiniApiType giniApiType, Moshi moshi) {
         mApiCommunicator = checkNotNull(apiCommunicator);
         mSessionManager = checkNotNull(sessionManager);
         mGiniApiType = checkNotNull(giniApiType);
+        mMoshi = moshi;
     }
 
     /**
@@ -716,6 +730,30 @@ public class DocumentTaskManager {
                 return mApiCommunicator.getLayoutForDocument(documentId, session);
             }
         }, Task.BACKGROUND_EXECUTOR);
+    }
+
+    public Task<List<PaymentProvider>> getPaymentProviders() {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
+            @Override
+            public Task<JSONArray> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPaymentProviders(session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONArray, List<PaymentProvider>>() {
+                    @Override
+                    public List<PaymentProvider> then(Task<JSONArray> task) throws Exception {
+                        Type type = Types.newParameterizedType(List.class, PaymentProviderResponse.class);
+                        JsonAdapter<List<PaymentProviderResponse>> adapter = mMoshi.adapter(type);
+                        List<PaymentProviderResponse> paymentProviderResponse = adapter.fromJson(task.getResult().toString());
+
+                        List<PaymentProvider> paymentProviders = new ArrayList<>();
+                        for (PaymentProviderResponse paymentProvider : paymentProviderResponse != null ? paymentProviderResponse : Collections.<PaymentProviderResponse>emptyList()) {
+                            paymentProviders.add(PaymentProviderKt.toPaymentProvider(paymentProvider));
+                        }
+                        return paymentProviders;
+                    }
+                });
     }
 
     /**

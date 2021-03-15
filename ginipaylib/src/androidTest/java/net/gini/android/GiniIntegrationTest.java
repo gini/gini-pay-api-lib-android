@@ -16,6 +16,7 @@ import net.gini.android.helpers.TestUtils;
 import net.gini.android.models.CompoundExtraction;
 import net.gini.android.models.Document;
 import net.gini.android.models.ExtractionsContainer;
+import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.SpecificExtraction;
 
 import org.json.JSONException;
@@ -527,6 +528,13 @@ public class GiniIntegrationTest {
                 });
         task.waitForCompletion();
 
+        assertNotNull(task.getResult());
+    }
+
+    @Test
+    public void testGetPaymentProviders() throws Exception {
+        Task<List<PaymentProvider>> task = gini.getDocumentTaskManager().getPaymentProviders();
+        task.waitForCompletion();
         assertNotNull(task.getResult());
     }
 
