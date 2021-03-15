@@ -223,7 +223,7 @@ public class DocumentTaskManagerTest {
                 .waitForCompletion();
 
         verify(mApiCommunicator)
-                .uploadDocument(any(byte[].class), eq("application/vnd.gini.v2.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
+                .uploadDocument(any(byte[].class), eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
     }
 
@@ -243,28 +243,9 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(document),
-                        eq("application/vnd.gini.v2.partial+jpeg"), eq("foobar.jpg"),
+                        eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"),
                         eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
-    }
-
-    @Test
-    public void testThatCreatePartialDocumentThrowsExceptionWhenUsingAccountingApiType() throws Exception {
-        final DocumentTaskManager documentTaskManager =
-                new DocumentTaskManager(mApiCommunicator, mSessionManager, GiniApiType.ACCOUNTING);
-
-        final byte[] document = new byte[]{0x01, 0x02};
-
-        UnsupportedOperationException exception = null;
-        try {
-            documentTaskManager.createPartialDocument(document, MediaTypes.IMAGE_JPEG, "foobar.jpg",
-                    DocumentType.INVOICE).waitForCompletion();
-        } catch (UnsupportedOperationException e) {
-            exception = e;
-        }
-
-        assertNotNull(exception);
-        assertEquals("Partial documents may be used only with the default Gini API. Use GiniApiType.DEFAULT.", exception.getMessage());
     }
 
     @Test
@@ -285,7 +266,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(any(byte[].class),
-                        eq("application/vnd.gini.v2.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
     }
@@ -315,7 +296,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v2.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
     }
@@ -345,7 +326,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v2.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
     }
@@ -375,29 +356,9 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v2.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), any(DocumentMetadata.class));
-    }
-
-    @Test
-    public void testThatCreateCompositeDocumentThrowsExceptionWhenUsingAccountingApiType() throws Exception {
-        final DocumentTaskManager documentTaskManager =
-                new DocumentTaskManager(mApiCommunicator, mSessionManager, GiniApiType.ACCOUNTING);
-
-        final LinkedHashMap<Document, Integer> partialDocuments = new LinkedHashMap<>();
-        partialDocuments.put(createDocument("1111"), -90);
-        partialDocuments.put(createDocument("2222"), 450);
-
-        UnsupportedOperationException exception = null;
-        try {
-            documentTaskManager.createCompositeDocument(partialDocuments, DocumentType.INVOICE).waitForCompletion();
-        } catch (UnsupportedOperationException e) {
-            exception = e;
-        }
-
-        assertNotNull(exception);
-        assertEquals("Composite documents may be used only with the default Gini API. Use GiniApiType.DEFAULT.", exception.getMessage());
     }
 
     @Test
@@ -610,19 +571,19 @@ public class DocumentTaskManagerTest {
                 new ArrayList<Uri>());
 
         try {
-            mDocumentTaskManager.sendFeedbackForExtractions(null, null);
+            mDocumentTaskManager.sendFeedbackForExtractions(null, null, null);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            mDocumentTaskManager.sendFeedbackForExtractions(document, null);
+            mDocumentTaskManager.sendFeedbackForExtractions(document, null, null);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            mDocumentTaskManager.sendFeedbackForExtractions(null, new HashMap<String, SpecificExtraction>());
+            mDocumentTaskManager.sendFeedbackForExtractions(null, new HashMap<String, SpecificExtraction>(), new HashMap<String, CompoundExtraction>());
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
@@ -634,8 +595,9 @@ public class DocumentTaskManagerTest {
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
         final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
+        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
 
-        assertNotNull(mDocumentTaskManager.sendFeedbackForExtractions(document, extractions));
+        assertNotNull(mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions));
     }
 
     @Test
@@ -644,10 +606,12 @@ public class DocumentTaskManagerTest {
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
         final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
-        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(Session.class))).thenReturn(
+        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
+
+        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(JSONObject.class), any(Session.class))).thenReturn(
                 Task.forResult(new JSONObject()));
 
-        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions);
+        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions);
         updateTask.waitForCompletion();
         assertNotNull(updateTask.getResult());
     }
@@ -664,10 +628,10 @@ public class DocumentTaskManagerTest {
                 new SpecificExtraction("senderName", "blah", "senderName", null, new ArrayList<Extraction>()));
 
         extractions.get("amountToPay").setValue("23:EUR");
-        mDocumentTaskManager.sendFeedbackForExtractions(document, extractions).waitForCompletion();
+        mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, new HashMap<String, CompoundExtraction>()).waitForCompletion();
 
         ArgumentCaptor<JSONObject> dataCaptor = ArgumentCaptor.forClass(JSONObject.class);
-        verify(mApiCommunicator).sendFeedback(eq("1234"), dataCaptor.capture(), any(Session.class));
+        verify(mApiCommunicator).sendFeedback(eq("1234"), dataCaptor.capture(), any(JSONObject.class), any(Session.class));
         final JSONObject updateData = dataCaptor.getValue();
         // Should update the amountToPay
         assertTrue(updateData.has("amountToPay"));
@@ -678,7 +642,7 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testSendFeedbackMarksExtractionsAsNotDirty() throws JSONException, InterruptedException {
-        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(Session.class))).thenReturn(
+        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(JSONObject.class), any(Session.class))).thenReturn(
                 Task.forResult(new JSONObject()));
         final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
@@ -690,7 +654,9 @@ public class DocumentTaskManagerTest {
                 new SpecificExtraction("senderName", "blah", "senderName", null, new ArrayList<Extraction>()));
 
         extractions.get("amountToPay").setValue("23:EUR");
-        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions);
+
+        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
+        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions);
 
         updateTask.waitForCompletion();
         assertFalse(extractions.get("amountToPay").isDirty());

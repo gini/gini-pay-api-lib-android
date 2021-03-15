@@ -13,6 +13,7 @@ import com.android.volley.toolbox.NoCache;
 import net.gini.android.authorization.EncryptedCredentialsStore;
 import net.gini.android.authorization.UserCredentials;
 import net.gini.android.helpers.TestUtils;
+import net.gini.android.models.CompoundExtraction;
 import net.gini.android.models.Document;
 import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.SpecificExtraction;
@@ -131,9 +132,11 @@ public class GiniIntegrationTest {
         feedback.put("iban", extractions.get("iban"));
         feedback.put("amountToPay", extractions.get("amountToPay"));
         feedback.put("bic", extractions.get("bic"));
-        feedback.put("senderName", extractions.get("senderName"));
+        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
 
-        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
+
+        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -473,7 +476,7 @@ public class GiniIntegrationTest {
                         || amountToPay.equals("26.42:EUR"));
         assertEquals("BIC should be found", "WELADED1MIN", extractions.get("bic").getValue());
         assertTrue("Payement recipient should be found", extractions.get("paymentRecipient").getValue().startsWith("Mindener Stadtwerke"));
-        assertTrue("Payment reference should be found", extractions.get("paymentReference").getValue().contains(
+        assertTrue("Payment reference should be found", extractions.get("paymentPurpose").getValue().contains(
                 "ReNr TST-00019, KdNr 765432"));
 
         // all extractions are correct, that means we have nothing to correct and will only send positive feedback
@@ -482,10 +485,12 @@ public class GiniIntegrationTest {
         feedback.put("iban", extractions.get("iban"));
         feedback.put("amountToPay", extractions.get("amountToPay"));
         feedback.put("bic", extractions.get("bic"));
-        feedback.put("paymentRecipient", extractions.get("senderName"));
-        feedback.put("paymentReference", extractions.get("paymentReference"));
+        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+        feedback.put("paymentPurpose", extractions.get("paymentPurpose"));
 
-        final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(compositeDocument.get(), feedback);
+        Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
+
+        final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(compositeDocument.get(), feedback, feedbackCompound);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -566,7 +571,7 @@ public class GiniIntegrationTest {
         assertEquals("IBAN should be found", "DE78370501980020008850", extractions.get("iban").getValue());
         assertEquals("Amount to pay should be found", "1.00:EUR", extractions.get("amountToPay").getValue());
         assertEquals("BIC should be found", "COLSDE33", extractions.get("bic").getValue());
-        assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("senderName").getValue());
+        assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("paymentRecipient").getValue());
 
         return Collections.singletonMap(upload.getResult(), extractions);
     }

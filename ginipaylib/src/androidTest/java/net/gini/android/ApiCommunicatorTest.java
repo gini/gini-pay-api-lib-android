@@ -28,6 +28,7 @@ import net.gini.android.authorization.Session;
 import net.gini.android.requests.DefaultRetryPolicyFactory;
 import net.gini.android.requests.RetryPolicyFactory;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -554,25 +555,25 @@ public class ApiCommunicatorTest {
     @Test
     public void testSendFeedbackThrowsExceptionWithNullArguments() throws JSONException {
         try {
-            mApiCommunicator.sendFeedback(null, null, null);
+            mApiCommunicator.sendFeedback(null, null, null, null);
             fail("Exception not raised");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            mApiCommunicator.sendFeedback("1234-1234", new JSONObject(), null);
+            mApiCommunicator.sendFeedback("1234-1234", new JSONObject(), new JSONObject(), null);
             fail("Exception not raised");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            mApiCommunicator.sendFeedback("1234-1234", null, createSession());
+            mApiCommunicator.sendFeedback("1234-1234", null, null, createSession());
             fail("Exception not raised");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            mApiCommunicator.sendFeedback(null, new JSONObject(), createSession());
+            mApiCommunicator.sendFeedback(null, new JSONObject(), new JSONObject(), createSession());
             fail("Exception not raised");
         } catch (NullPointerException ignored) {
         }
@@ -582,12 +583,12 @@ public class ApiCommunicatorTest {
     public void testSendFeedbackUpdatesCorrectDocument() throws JSONException {
         Session session = createSession();
 
-        mApiCommunicator.sendFeedback("1234-1234", new JSONObject(), session);
+        mApiCommunicator.sendFeedback("1234-1234", new JSONObject(), new JSONObject(), session);
 
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234-1234/extractions", request.getUrl());
+        assertEquals("https://api.gini.net/documents/1234-1234/extractions/feedback", request.getUrl());
         assertEquals(PUT, request.getMethod());
     }
 
@@ -599,19 +600,26 @@ public class ApiCommunicatorTest {
         extractions.put("amountToPay", value);
         value.put("value", "32:EUR");
 
-        mApiCommunicator.sendFeedback("1234-1234", extractions, session);
+        JSONObject compoundExtractions = new JSONObject();
+        JSONArray lineItems = new JSONArray();
+        JSONObject lineValue = new JSONObject();
+        lineValue.put("value", "10101");
+        lineItems.put(lineValue);
+        compoundExtractions.put("lineItems", lineItems);
+
+        mApiCommunicator.sendFeedback("1234-1234", extractions, compoundExtractions, session);
 
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("{\"feedback\":{\"amountToPay\":{\"value\":\"32:EUR\"}}}", new String(request.getBody()));
+        assertEquals("{\"extractions\":{\"amountToPay\":{\"value\":\"32:EUR\"}},\"compoundExtractions\":{\"lineItems\":[{\"value\":\"10101\"}]}}", new String(request.getBody()));
     }
 
     @Test
     public void testSendFeedbackHasCorrectAuthorizationHeader() throws AuthFailureError, JSONException {
         Session session = createSession("9999-8888-7777");
 
-        mApiCommunicator.sendFeedback("1234", new JSONObject(), session);
+        mApiCommunicator.sendFeedback("1234", new JSONObject(), new JSONObject(), session);
 
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
@@ -623,7 +631,7 @@ public class ApiCommunicatorTest {
     public void testSendFeedbackHasCorrectContentType() throws AuthFailureError, JSONException {
         Session session = createSession("9999-8888-7777");
 
-        mApiCommunicator.sendFeedback("1234", new JSONObject(), session);
+        mApiCommunicator.sendFeedback("1234", new JSONObject(), new JSONObject(), session);
 
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());

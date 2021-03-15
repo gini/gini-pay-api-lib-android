@@ -19,7 +19,7 @@ public class MediaTypesTest {
 
     @Test
     public void testGINI_JSON_V2() {
-        assertEquals("application/vnd.gini.v2+json", MediaTypes.GINI_JSON_V2);
+        assertEquals("application/vnd.gini.v1+json", MediaTypes.GINI_JSON_V2);
     }
 
     @Test
