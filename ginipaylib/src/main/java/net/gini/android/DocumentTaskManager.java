@@ -18,10 +18,13 @@ import net.gini.android.models.Extraction;
 import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentProviderKt;
+import net.gini.android.models.PaymentRequest;
+import net.gini.android.models.PaymentRequestKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
-import net.gini.android.requests.PaymentRequest;
+import net.gini.android.requests.PaymentRequestBody;
 import net.gini.android.response.PaymentProviderResponse;
+import net.gini.android.response.PaymentRequestResponse;
 import net.gini.android.response.RequestIdResponse;
 
 import org.json.JSONArray;
@@ -128,7 +131,6 @@ public class DocumentTaskManager {
      * this method deletes the parents before deleting the partial document.
      *
      * @param documentId The id of an existing partial document
-     *
      * @return A Task which will resolve to an empty string.
      */
     public Task<String> deletePartialDocumentAndParents(@NonNull final String documentId) {
@@ -154,11 +156,10 @@ public class DocumentTaskManager {
 
     /**
      * Deletes a Gini document.
-     *
+     * <p>
      * For deleting partial documents use {@link #deletePartialDocumentAndParents(String)} instead.
      *
      * @param documentId The id of an existing document
-     *
      * @return A Task which will resolve to an empty string.
      */
     public Task<String> deleteDocument(@NonNull final String documentId) {
@@ -193,34 +194,32 @@ public class DocumentTaskManager {
      * @param filename     Optional the filename of the given document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     *
      * @return A Task which will resolve to the Document instance of the freshly created document.
      */
     public Task<Document> createPartialDocument(@NonNull final byte[] document, @NonNull final String contentType,
-            @Nullable final String filename, @Nullable final DocumentType documentType) {
+                                                @Nullable final String filename, @Nullable final DocumentType documentType) {
         return createPartialDocumentInternal(document, contentType, filename, documentType, null);
     }
 
     /**
      * Uploads raw data and creates a new Gini partial document.
      *
-     * @param document          A byte array representing an image, a pdf or UTF-8 encoded text
-     * @param contentType       The media type of the uploaded data
-     * @param filename          Optional the filename of the given document
-     * @param documentType      Optional a document type hint. See the documentation for the document type hints for
-     *                          possible values
-     * @param documentMetadata  Additional information related to the document (e.g. the branch id
-     *                          to which the client app belongs)
-     *
+     * @param document         A byte array representing an image, a pdf or UTF-8 encoded text
+     * @param contentType      The media type of the uploaded data
+     * @param filename         Optional the filename of the given document
+     * @param documentType     Optional a document type hint. See the documentation for the document type hints for
+     *                         possible values
+     * @param documentMetadata Additional information related to the document (e.g. the branch id
+     *                         to which the client app belongs)
      * @return A Task which will resolve to the Document instance of the freshly created document.
      */
     public Task<Document> createPartialDocument(@NonNull final byte[] document, @NonNull final String contentType,
-            @Nullable final String filename, @Nullable final DocumentType documentType, @NonNull final DocumentMetadata documentMetadata) {
+                                                @Nullable final String filename, @Nullable final DocumentType documentType, @NonNull final DocumentMetadata documentMetadata) {
         return createPartialDocumentInternal(document, contentType, filename, documentType, documentMetadata);
     }
 
     private Task<Document> createPartialDocumentInternal(@NonNull final byte[] document, @NonNull final String contentType,
-            @Nullable final String filename, @Nullable final DocumentType documentType, @Nullable final DocumentMetadata documentMetadata) {
+                                                         @Nullable final String filename, @Nullable final DocumentType documentType, @Nullable final DocumentMetadata documentMetadata) {
         if (!mGiniApiType.getGiniJsonMediaType().equals(MediaTypes.GINI_JSON_V2)) {
             throw new UnsupportedOperationException(
                     "Partial documents may be used only with the default Gini API. Use GiniApiType.DEFAULT.");
@@ -247,7 +246,6 @@ public class DocumentTaskManager {
      * @param documents    A list of partial documents which should be part of a multi-page document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     *
      * @return A Task which will resolve to the Document instance of the freshly created document.
      */
     public Task<Document> createCompositeDocument(@NonNull final List<Document> documents, @Nullable final DocumentType documentType) {
@@ -283,11 +281,10 @@ public class DocumentTaskManager {
      * @param documentRotationMap A map of partial documents and their rotation in degrees
      * @param documentType        Optional a document type hint. See the documentation for the document type hints for
      *                            possible values
-     *
      * @return A Task which will resolve to the Document instance of the freshly created document.
      */
     public Task<Document> createCompositeDocument(@NonNull final LinkedHashMap<Document, Integer> documentRotationMap,
-            @Nullable final DocumentType documentType) {
+                                                  @Nullable final DocumentType documentType) {
         if (!mGiniApiType.getGiniJsonMediaType().equals(MediaTypes.GINI_JSON_V2)) {
             throw new UnsupportedOperationException(
                     "Composite documents may be used only with the default Gini API. Use GiniApiType.DEFAULT.");
@@ -346,7 +343,6 @@ public class DocumentTaskManager {
      * @param filename     Optional the filename of the given document.
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values.
-     *
      * @return A Task which will resolve to the Document instance of the freshly created document.
      *
      * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
@@ -356,20 +352,19 @@ public class DocumentTaskManager {
      * and to send feedback.
      */
     public Task<Document> createDocument(@NonNull final byte[] document, @Nullable final String filename,
-            @Nullable final DocumentType documentType) {
+                                         @Nullable final DocumentType documentType) {
         return createDocumentInternal(document, filename, documentType, null);
     }
 
     /**
      * Uploads raw data and creates a new Gini document.
      *
-     * @param document          A byte array representing an image, a pdf or UTF-8 encoded text
-     * @param filename          Optional the filename of the given document.
-     * @param documentType      Optional a document type hint. See the documentation for the document type hints for
-     *                          possible values.
-     * @param documentMetadata  Additional information related to the document (e.g. the branch id
-     *                          to which the client app belongs)
-     *
+     * @param document         A byte array representing an image, a pdf or UTF-8 encoded text
+     * @param filename         Optional the filename of the given document.
+     * @param documentType     Optional a document type hint. See the documentation for the document type hints for
+     *                         possible values.
+     * @param documentMetadata Additional information related to the document (e.g. the branch id
+     *                         to which the client app belongs)
      * @return A Task which will resolve to the Document instance of the freshly created document.
      *
      * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
@@ -379,12 +374,12 @@ public class DocumentTaskManager {
      * and to send feedback.
      */
     public Task<Document> createDocument(@NonNull final byte[] document, @Nullable final String filename,
-            @Nullable final DocumentType documentType, @NonNull final DocumentMetadata documentMetadata) {
+                                         @Nullable final DocumentType documentType, @NonNull final DocumentMetadata documentMetadata) {
         return createDocumentInternal(document, filename, documentType, documentMetadata);
     }
 
     private Task<Document> createDocumentInternal(@NonNull final byte[] document, @Nullable final String filename,
-            @Nullable final DocumentType documentType, @Nullable final DocumentMetadata documentMetadata) {
+                                                  @Nullable final DocumentType documentType, @Nullable final DocumentMetadata documentMetadata) {
         return createDocumentInternal(new Continuation<Session, Task<Uri>>() {
             @Override
             public Task<Uri> then(Task<Session> sessionTask) throws Exception {
@@ -414,7 +409,6 @@ public class DocumentTaskManager {
      * Get the extractions for the given document.
      *
      * @param document The Document instance for whose document the extractions are returned.
-     *
      * @return A Task which will resolve to an {@link ExtractionsContainer} object.
      */
     public Task<ExtractionsContainer> getAllExtractions(@NonNull final Document document) {
@@ -451,7 +445,7 @@ public class DocumentTaskManager {
 
     @NonNull
     private Map<String, SpecificExtraction> parseSpecificExtractions(@NonNull final JSONObject specificExtractionsJson,
-            @NonNull final Map<String, List<Extraction>> candidates)
+                                                                     @NonNull final Map<String, List<Extraction>> candidates)
             throws JSONException {
         final Map<String, SpecificExtraction> specificExtractions = new HashMap<>();
         @SuppressWarnings("unchecked")
@@ -478,7 +472,7 @@ public class DocumentTaskManager {
     }
 
     private Map<String, CompoundExtraction> parseCompoundExtractions(@Nullable final JSONObject compoundExtractionsJson,
-            @NonNull final Map<String, List<Extraction>> candidates)
+                                                                     @NonNull final Map<String, List<Extraction>> candidates)
             throws JSONException {
         if (compoundExtractionsJson == null) {
             return Collections.emptyMap();
@@ -525,7 +519,6 @@ public class DocumentTaskManager {
      * Get the document with the given unique identifier.
      *
      * @param documentId The unique identifier of the document.
-     *
      * @return A document instance representing all the document's metadata.
      */
     public Task<Document> getDocument(@NonNull final String documentId) {
@@ -549,7 +542,6 @@ public class DocumentTaskManager {
      * get a document from an arbitrary URI.</b>
      *
      * @param documentUri The URI of the document.
-     *
      * @return A document instance representing all the document's metadata.
      */
     public Task<Document> getDocument(@NonNull final Uri documentUri) {
@@ -621,22 +613,20 @@ public class DocumentTaskManager {
      * on extractions" in
      * the Gini API documentation.
      *
-     * @param document    The document for which the extractions should be updated.
-     * @param extractions A Map where the key is the name of the specific extraction and the value is the
-     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                    method of this manager.
+     * @param document            The document for which the extractions should be updated.
+     * @param extractions         A Map where the key is the name of the specific extraction and the value is the
+     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
      * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
-     *                    CompoundExtraction object. This is the same structure as returned by the getExtractions
-     *                    method of this manager.
-     *
+     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
      * @return A Task which will resolve to the same document instance when storing the updated
      * extractions was successful.
-     *
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
     public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
-            @NonNull final Map<String, SpecificExtraction> extractions,
-            @NonNull final Map<String, CompoundExtraction> compoundExtractions)
+                                                     @NonNull final Map<String, SpecificExtraction> extractions,
+                                                     @NonNull final Map<String, CompoundExtraction> compoundExtractions)
             throws JSONException {
         final String documentId = document.getId();
 
@@ -694,12 +684,11 @@ public class DocumentTaskManager {
      * @param document    The erroneous document.
      * @param summary     Optional a short summary of the occurred error.
      * @param description Optional a more detailed description of the occurred error.
-     *
      * @return A Task which will resolve to an error ID. This is a unique identifier for your error report
      * and can be used to refer to the reported error towards the Gini support.
      */
     public Task<String> reportDocument(@NonNull final Document document, @Nullable final String summary,
-            @Nullable final String description) {
+                                       @Nullable final String description) {
         final String documentId = document.getId();
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
@@ -721,7 +710,6 @@ public class DocumentTaskManager {
      * positional information, based on the processed document.
      *
      * @param document The document for which the layouts is requested.
-     *
      * @return A task which will resolve to a string containing the layout xml.
      */
     public Task<JSONObject> getLayout(@NonNull final Document document) {
@@ -778,12 +766,12 @@ public class DocumentTaskManager {
                 });
     }
 
-    public Task<String> createPaymentRequest(final PaymentRequest paymentRequestBody) {
+    public Task<String> createPaymentRequest(final PaymentRequestBody paymentRequestBody) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) throws JSONException {
                 final Session session = task.getResult();
-                JsonAdapter<PaymentRequest> adapter = mMoshi.adapter(PaymentRequest.class);
+                JsonAdapter<PaymentRequestBody> adapter = mMoshi.adapter(PaymentRequestBody.class);
                 String body = adapter.toJson(paymentRequestBody);
 
                 return mApiCommunicator.postPaymentRequests(new JSONObject(body), session);
@@ -795,7 +783,28 @@ public class DocumentTaskManager {
                         JsonAdapter<RequestIdResponse> adapter = mMoshi.adapter(RequestIdResponse.class);
                         RequestIdResponse requestIdResponse = adapter.fromJson(task.getResult().toString());
 
-                        return Objects.requireNonNull(requestIdResponse).getId();
+                        String location = Objects.requireNonNull(requestIdResponse).getLocation();
+
+                        return location.substring(location.lastIndexOf("/") + 1);
+                    }
+                });
+    }
+
+    public Task<PaymentRequest> getPaymentRequest(final String id) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPaymentRequest(id, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONObject, PaymentRequest>() {
+                    @Override
+                    public PaymentRequest then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<PaymentRequestResponse> adapter = mMoshi.adapter(PaymentRequestResponse.class);
+                        PaymentRequestResponse requestResponse = adapter.fromJson(task.getResult().toString());
+
+                        return PaymentRequestKt.toPaymentRequest(Objects.requireNonNull(requestResponse));
                     }
                 });
     }
@@ -805,9 +814,7 @@ public class DocumentTaskManager {
      * name of the candidates list (e.g. "amounts" or "dates") and the value is a list of extraction instances.
      *
      * @param responseData The JSON data of the key candidates from the response of the Gini API.
-     *
      * @return The created mapping as described above.
-     *
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     protected HashMap<String, List<Extraction>> extractionCandidatesFromApiResponse(@NonNull final JSONObject responseData)
@@ -833,9 +840,7 @@ public class DocumentTaskManager {
      * Helper method which creates an Extraction instance from the JSON data which is returned by the Gini API.
      *
      * @param responseData The JSON data.
-     *
      * @return The created Extraction instance.
-     *
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     protected Extraction extractionFromApiResponse(@NonNull final JSONObject responseData) throws JSONException {

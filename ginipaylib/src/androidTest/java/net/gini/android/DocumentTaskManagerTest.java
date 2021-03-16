@@ -34,9 +34,10 @@ import net.gini.android.models.Document;
 import net.gini.android.models.Extraction;
 import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.PaymentProvider;
+import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
-import net.gini.android.requests.PaymentRequest;
+import net.gini.android.requests.PaymentRequestBody;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -179,8 +180,12 @@ public class DocumentTaskManagerTest {
         return Task.forResult(readJSONFile("payment-provider.json"));
     }
 
+    private Task<JSONObject> createPaymentRequestJSONTask() throws IOException, JSONException {
+        return Task.forResult(readJSONFile("payment-request.json"));
+    }
+
     private Task<JSONObject> createHeaderJSONTask() throws IOException, JSONException {
-        return Task.forResult(new JSONObject(Collections.singletonMap("X-Request-Id", "7b5a7f79-ae7c-4040-b6cf-25cde58ad937")));
+        return Task.forResult(new JSONObject(Collections.singletonMap("location", "7b5a7f79-ae7c-4040-b6cf-25cde58ad937")));
     }
 
     private Task<JSONObject> createErrorReportJSONTask(final String errorId) throws JSONException {
@@ -875,11 +880,31 @@ public class DocumentTaskManagerTest {
     public void testCreatePaymentRequest() throws Exception {
         when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class))).thenReturn(createHeaderJSONTask());
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequest("", "", "", "", "", "", ""));
+        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestBody("", "", "", "", "", "", ""));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
         }
         assertEquals("7b5a7f79-ae7c-4040-b6cf-25cde58ad937", paymentRequestTask.getResult());
+    }
+
+    private List<PaymentRequest> getPaymentRequests() {
+        final List<PaymentRequest> paymentRequests = new ArrayList<>();
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
+        return paymentRequests;
+    }
+
+    @Test
+    public void testGetPaymentRequest() throws Exception {
+        when(mApiCommunicator.getPaymentRequest(any(String.class), any(Session.class))).thenReturn(createPaymentRequestJSONTask());
+
+        Task<PaymentRequest> paymentRequestTask = mDocumentTaskManager.getPaymentRequest("");
+        paymentRequestTask.waitForCompletion();
+        if (paymentRequestTask.isFaulted()) {
+            throw paymentRequestTask.getError();
+        }
+        final PaymentRequest paymentRequest = paymentRequestTask.getResult();
+        assertEquals(getPaymentRequests().get(0), paymentRequest);
     }
 }

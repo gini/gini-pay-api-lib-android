@@ -5,5 +5,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class RequestIdResponse(
-    @Json(name = "x-request-id") val id: String
+    @Json(name = "location") val location: String
 )

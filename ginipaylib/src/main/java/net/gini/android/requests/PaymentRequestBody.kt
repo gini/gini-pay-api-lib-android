@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaymentRequest(
+data class PaymentRequestBody(
     @Json(name = "sourceDocumentLocation") val sourceDocumentLocation: String,
     @Json(name = "paymentProvider") val paymentProvider: String,
     @Json(name = "recipient") val recipient: String,
