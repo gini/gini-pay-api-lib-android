@@ -169,8 +169,12 @@ public class DocumentTaskManagerTest {
         return Task.forResult(readJSONFile("extractions.json"));
     }
 
-    private Task<JSONArray> createPaymentProviderJSONTask() throws IOException, JSONException {
+    private Task<JSONArray> createPaymentProvidersJSONTask() throws IOException, JSONException {
         return Task.forResult(readJSONArrayFile("payment-providers.json"));
+    }
+
+    private Task<JSONObject> createPaymentProviderJSONTask() throws IOException, JSONException {
+        return Task.forResult(readJSONFile("payment-provider.json"));
     }
 
     private Task<JSONObject> createErrorReportJSONTask(final String errorId) throws JSONException {
@@ -830,7 +834,7 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testGetPaymentProviders() throws Exception {
-        when(mApiCommunicator.getPaymentProviders(any(Session.class))).thenReturn(createPaymentProviderJSONTask());
+        when(mApiCommunicator.getPaymentProviders(any(Session.class))).thenReturn(createPaymentProvidersJSONTask());
 
         Task<List<PaymentProvider>> paymentProvidersTask = mDocumentTaskManager.getPaymentProviders();
         paymentProvidersTask.waitForCompletion();
@@ -839,6 +843,19 @@ public class DocumentTaskManagerTest {
         }
         final List<PaymentProvider> paymentProvidersResult = paymentProvidersTask.getResult();
         assertEquals(getPaymentProviders(), paymentProvidersResult);
+    }
+
+    @Test
+    public void testGetPaymentProvider() throws Exception {
+        when(mApiCommunicator.getPaymentProvider(any(String.class), any(Session.class))).thenReturn(createPaymentProviderJSONTask());
+
+        Task<PaymentProvider> paymentProvidersTask = mDocumentTaskManager.getPaymentProvider("");
+        paymentProvidersTask.waitForCompletion();
+        if (paymentProvidersTask.isFaulted()) {
+            throw paymentProvidersTask.getError();
+        }
+        final PaymentProvider paymentProviderResult = paymentProvidersTask.getResult();
+        assertEquals(getPaymentProviders().get(0), paymentProviderResult);
     }
 
     private List<PaymentProvider> getPaymentProviders() {

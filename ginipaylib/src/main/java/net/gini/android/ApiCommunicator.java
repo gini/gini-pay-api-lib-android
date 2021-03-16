@@ -256,6 +256,12 @@ public class ApiCommunicator {
         return doRequestWithJsonArrayResponse(url, GET, checkNotNull(session));
     }
 
+    public Task<JSONObject> getPaymentProvider(final String id, final Session session) {
+        final String url = mBaseUri.buildUpon().path("/paymentProviders/").appendPath(id).toString();
+
+        return doRequestWithJsonResponse(url, GET, checkNotNull(session));
+    }
+
     /**
      * Helper method to do a request that returns JSON data. The request is wrapped in a Task that will resolve to a
      * JSONObject.

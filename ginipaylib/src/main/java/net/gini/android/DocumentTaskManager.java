@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import bolts.Continuation;
@@ -752,6 +753,25 @@ public class DocumentTaskManager {
                             paymentProviders.add(PaymentProviderKt.toPaymentProvider(paymentProvider));
                         }
                         return paymentProviders;
+                    }
+                });
+    }
+
+    public Task<PaymentProvider> getPaymentProvider(final String id) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPaymentProvider(id, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONObject, PaymentProvider>() {
+                    @Override
+                    public PaymentProvider then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<PaymentProviderResponse> adapter = mMoshi.adapter(PaymentProviderResponse.class);
+                        PaymentProviderResponse paymentProviderResponse = adapter.fromJson(task.getResult().toString());
+
+                        return PaymentProviderKt.toPaymentProvider(Objects.requireNonNull(paymentProviderResponse));
                     }
                 });
     }

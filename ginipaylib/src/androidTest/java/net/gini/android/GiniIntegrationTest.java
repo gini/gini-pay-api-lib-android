@@ -538,6 +538,19 @@ public class GiniIntegrationTest {
         assertNotNull(task.getResult());
     }
 
+    @Test
+    public void testGetPaymentProvider() throws Exception {
+        Task<List<PaymentProvider>> listTask = gini.getDocumentTaskManager().getPaymentProviders();
+        listTask.waitForCompletion();
+        assertNotNull(listTask.getResult());
+
+        final List<PaymentProvider> providers = listTask.getResult();
+
+        Task<PaymentProvider> task = gini.getDocumentTaskManager().getPaymentProvider(providers.get(0).getId());
+        task.waitForCompletion();
+        assertEquals(providers.get(0), task.getResult());
+    }
+
     private String extractEmailDomain(String email) {
         String[] components = email.split("@");
         if (components.length > 1) {
