@@ -20,7 +20,9 @@ import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentProviderKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.PaymentRequest;
 import net.gini.android.response.PaymentProviderResponse;
+import net.gini.android.response.RequestIdResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -772,6 +774,28 @@ public class DocumentTaskManager {
                         PaymentProviderResponse paymentProviderResponse = adapter.fromJson(task.getResult().toString());
 
                         return PaymentProviderKt.toPaymentProvider(Objects.requireNonNull(paymentProviderResponse));
+                    }
+                });
+    }
+
+    public Task<String> createPaymentRequest(final PaymentRequest paymentRequestBody) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) throws JSONException {
+                final Session session = task.getResult();
+                JsonAdapter<PaymentRequest> adapter = mMoshi.adapter(PaymentRequest.class);
+                String body = adapter.toJson(paymentRequestBody);
+
+                return mApiCommunicator.postPaymentRequests(new JSONObject(body), session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONObject, String>() {
+                    @Override
+                    public String then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<RequestIdResponse> adapter = mMoshi.adapter(RequestIdResponse.class);
+                        RequestIdResponse requestIdResponse = adapter.fromJson(task.getResult().toString());
+
+                        return Objects.requireNonNull(requestIdResponse).getId();
                     }
                 });
     }

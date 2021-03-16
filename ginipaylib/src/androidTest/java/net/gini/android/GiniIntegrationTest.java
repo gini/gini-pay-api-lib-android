@@ -18,6 +18,7 @@ import net.gini.android.models.Document;
 import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.PaymentRequest;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -549,6 +551,35 @@ public class GiniIntegrationTest {
         Task<PaymentProvider> task = gini.getDocumentTaskManager().getPaymentProvider(providers.get(0).getId());
         task.waitForCompletion();
         assertEquals(providers.get(0), task.getResult());
+    }
+
+    @Test
+    public void testCreatePaymentRequest() throws Exception {
+        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
+        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        Map<Document, Map<String, SpecificExtraction>> documentWithExtractions = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE);
+        Document document = documentWithExtractions.keySet().iterator().next();
+        Map<String, SpecificExtraction> extractions = documentWithExtractions.get(document);
+
+        Task<List<PaymentProvider>> listTask = gini.getDocumentTaskManager().getPaymentProviders();
+        listTask.waitForCompletion();
+        assertNotNull(listTask.getResult());
+        final List<PaymentProvider> providers = listTask.getResult();
+
+        final PaymentRequest paymentRequest = new PaymentRequest(
+                document.getUri().toString(),
+                providers.get(0).getId(),
+                Objects.requireNonNull(extractions.get("paymentRecipient")).getValue(),
+                Objects.requireNonNull(extractions.get("iban")).getValue(),
+                Objects.requireNonNull(extractions.get("bic")).getValue(),
+                Objects.requireNonNull(extractions.get("amountToPay")).getValue(),
+                Objects.requireNonNull(extractions.get("paymentPurpose")).getValue());
+        Task<String> task = gini.getDocumentTaskManager().createPaymentRequest(paymentRequest);
+        task.waitForCompletion();
+        assertNotNull(task.getResult());
     }
 
     private String extractEmailDomain(String email) {

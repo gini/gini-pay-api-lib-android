@@ -36,6 +36,7 @@ import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.PaymentRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -175,6 +177,10 @@ public class DocumentTaskManagerTest {
 
     private Task<JSONObject> createPaymentProviderJSONTask() throws IOException, JSONException {
         return Task.forResult(readJSONFile("payment-provider.json"));
+    }
+
+    private Task<JSONObject> createHeaderJSONTask() throws IOException, JSONException {
+        return Task.forResult(new JSONObject(Collections.singletonMap("X-Request-Id", "7b5a7f79-ae7c-4040-b6cf-25cde58ad937")));
     }
 
     private Task<JSONObject> createErrorReportJSONTask(final String errorId) throws JSONException {
@@ -863,5 +869,17 @@ public class DocumentTaskManagerTest {
         paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "3.5.1"));
         paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "6.9.1"));
         return paymentProviders;
+    }
+
+    @Test
+    public void testCreatePaymentRequest() throws Exception {
+        when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class))).thenReturn(createHeaderJSONTask());
+
+        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequest("", "", "", "", "", "", ""));
+        paymentRequestTask.waitForCompletion();
+        if (paymentRequestTask.isFaulted()) {
+            throw paymentRequestTask.getError();
+        }
+        assertEquals("7b5a7f79-ae7c-4040-b6cf-25cde58ad937", paymentRequestTask.getResult());
     }
 }

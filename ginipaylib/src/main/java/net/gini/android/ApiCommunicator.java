@@ -19,6 +19,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import net.gini.android.authorization.Session;
+import net.gini.android.authorization.requests.BearerHeadersRequest;
 import net.gini.android.authorization.requests.BearerJsonArrayRequest;
 import net.gini.android.authorization.requests.BearerJsonObjectRequest;
 import net.gini.android.requests.BearerUploadRequest;
@@ -260,6 +261,32 @@ public class ApiCommunicator {
         final String url = mBaseUri.buildUpon().path("/paymentProviders/").appendPath(id).toString();
 
         return doRequestWithJsonResponse(url, GET, checkNotNull(session));
+    }
+
+    public Task<JSONObject> postPaymentRequests(final JSONObject body, final Session session) {
+        final String url = mBaseUri.buildUpon().path("/paymentRequests")
+                .toString();
+
+        return doRequestWithHeadersResponse(url, POST, body, checkNotNull(session));
+    }
+
+    /**
+     * Helper method to do a request that returns data in headers. The request is wrapped in a Task that will resolve to a
+     * JSONObject.
+     *
+     * @param url       The full URL of the request.
+     * @param method    The HTTP method of the request.
+     * @param session   A valid session for the Gini API.
+     * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
+     */
+    private Task<JSONObject> doRequestWithHeadersResponse(final String url, int method, final JSONObject body, final Session session) {
+        final RequestTaskCompletionSource<JSONObject> completionSource =
+                RequestTaskCompletionSource.newCompletionSource();
+        final BearerHeadersRequest documentsRequest =
+                new BearerHeadersRequest(method, url, body, checkNotNull(session),
+                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), MediaTypes.GINI_JSON_V1);
+        mRequestQueue.add(documentsRequest);
+        return completionSource.getTask();
     }
 
     /**

@@ -8,6 +8,6 @@ data class PaymentProvider(
     val appVersion: String,
 )
 
-fun PaymentProviderResponse.toPaymentProvider() = PaymentProvider(
+internal fun PaymentProviderResponse.toPaymentProvider() = PaymentProvider(
     id, name, minAppVersion.android
 )
