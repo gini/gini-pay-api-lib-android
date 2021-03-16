@@ -276,6 +276,12 @@ public class ApiCommunicator {
         return doRequestWithJsonResponse(url, GET, checkNotNull(session));
     }
 
+    public Task<JSONArray> getPaymentRequests(final Session session) {
+        final String url = mBaseUri.buildUpon().path("/paymentRequests").toString();
+
+        return doRequestWithJsonArrayResponse(url, GET, checkNotNull(session));
+    }
+
     /**
      * Helper method to do a request that returns data in headers. The request is wrapped in a Task that will resolve to a
      * JSONObject.

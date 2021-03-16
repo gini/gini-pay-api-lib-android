@@ -184,6 +184,10 @@ public class DocumentTaskManagerTest {
         return Task.forResult(readJSONFile("payment-request.json"));
     }
 
+    private Task<JSONArray> createPaymentRequestsJSONTask() throws IOException, JSONException {
+        return Task.forResult(readJSONArrayFile("payment-requests.json"));
+    }
+
     private Task<JSONObject> createHeaderJSONTask() throws IOException, JSONException {
         return Task.forResult(new JSONObject(Collections.singletonMap("location", "7b5a7f79-ae7c-4040-b6cf-25cde58ad937")));
     }
@@ -906,5 +910,18 @@ public class DocumentTaskManagerTest {
         }
         final PaymentRequest paymentRequest = paymentRequestTask.getResult();
         assertEquals(getPaymentRequests().get(0), paymentRequest);
+    }
+
+    @Test
+    public void testGetPaymentRequests() throws Exception {
+        when(mApiCommunicator.getPaymentRequests(any(Session.class))).thenReturn(createPaymentRequestsJSONTask());
+
+        Task<List<PaymentRequest>> paymentProvidersTask = mDocumentTaskManager.getPaymentRequests();
+        paymentProvidersTask.waitForCompletion();
+        if (paymentProvidersTask.isFaulted()) {
+            throw paymentProvidersTask.getError();
+        }
+        final List<PaymentRequest> paymentProvidersResult = paymentProvidersTask.getResult();
+        assertEquals(getPaymentRequests(), paymentProvidersResult);
     }
 }

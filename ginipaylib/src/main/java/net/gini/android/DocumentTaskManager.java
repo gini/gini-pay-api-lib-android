@@ -809,6 +809,30 @@ public class DocumentTaskManager {
                 });
     }
 
+    public Task<List<PaymentRequest>> getPaymentRequests() {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
+            @Override
+            public Task<JSONArray> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPaymentRequests(session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONArray, List<PaymentRequest>>() {
+                    @Override
+                    public List<PaymentRequest> then(Task<JSONArray> task) throws Exception {
+                        Type type = Types.newParameterizedType(List.class, PaymentRequestResponse.class);
+                        JsonAdapter<List<PaymentRequestResponse>> adapter = mMoshi.adapter(type);
+                        List<PaymentRequestResponse> paymentRequestResponses = adapter.fromJson(task.getResult().toString());
+
+                        List<PaymentRequest> paymentProviders = new ArrayList<>();
+                        for (PaymentRequestResponse paymentRequestResponse : paymentRequestResponses != null ? paymentRequestResponses : Collections.<PaymentRequestResponse>emptyList()) {
+                            paymentProviders.add(PaymentRequestKt.toPaymentRequest(paymentRequestResponse));
+                        }
+                        return paymentProviders;
+                    }
+                });
+    }
+
     /**
      * Helper method which takes the JSON response of the Gini API as input and returns a mapping where the key is the
      * name of the candidates list (e.g. "amounts" or "dates") and the value is a list of extraction instances.
