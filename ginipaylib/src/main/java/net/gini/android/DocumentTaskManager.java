@@ -16,6 +16,8 @@ import net.gini.android.models.CompoundExtraction;
 import net.gini.android.models.Document;
 import net.gini.android.models.Extraction;
 import net.gini.android.models.ExtractionsContainer;
+import net.gini.android.models.Payment;
+import net.gini.android.models.PaymentKt;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentProviderKt;
 import net.gini.android.models.PaymentRequest;
@@ -23,9 +25,11 @@ import net.gini.android.models.PaymentRequestKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
+import net.gini.android.requests.ResolvePaymentBody;
 import net.gini.android.response.PaymentProviderResponse;
 import net.gini.android.response.PaymentRequestResponse;
-import net.gini.android.response.RequestIdResponse;
+import net.gini.android.response.LocationResponse;
+import net.gini.android.response.PaymentResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -780,10 +784,10 @@ public class DocumentTaskManager {
                 .onSuccess(new Continuation<JSONObject, String>() {
                     @Override
                     public String then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<RequestIdResponse> adapter = mMoshi.adapter(RequestIdResponse.class);
-                        RequestIdResponse requestIdResponse = adapter.fromJson(task.getResult().toString());
+                        JsonAdapter<LocationResponse> adapter = mMoshi.adapter(LocationResponse.class);
+                        LocationResponse locationResponse = adapter.fromJson(task.getResult().toString());
 
-                        String location = Objects.requireNonNull(requestIdResponse).getLocation();
+                        String location = Objects.requireNonNull(locationResponse).getLocation();
 
                         return location.substring(location.lastIndexOf("/") + 1);
                     }
@@ -829,6 +833,50 @@ public class DocumentTaskManager {
                             paymentProviders.add(PaymentRequestKt.toPaymentRequest(paymentRequestResponse));
                         }
                         return paymentProviders;
+                    }
+                });
+    }
+
+    public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentBody resolvePaymentBody) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) throws JSONException {
+                final Session session = task.getResult();
+                JsonAdapter<ResolvePaymentBody> adapter = mMoshi.adapter(ResolvePaymentBody.class);
+                String body = adapter.toJson(resolvePaymentBody);
+
+                return mApiCommunicator.resolvePaymentRequests(requestId, new JSONObject(body), session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONObject, String>() {
+                    @Override
+                    public String then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<LocationResponse> adapter = mMoshi.adapter(LocationResponse.class);
+                        LocationResponse locationResponse = adapter.fromJson(task.getResult().toString());
+
+                        String location = Objects.requireNonNull(locationResponse).getLocation();
+
+                        String[] segments = location.split("/");
+                        return segments[segments.length - 2];
+                    }
+                });
+    }
+
+    public Task<Payment> getPayment(final String id) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPayment(id, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(new Continuation<JSONObject, Payment>() {
+                    @Override
+                    public Payment then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<PaymentResponse> adapter = mMoshi.adapter(PaymentResponse.class);
+                        PaymentResponse paymentResponse = adapter.fromJson(task.getResult().toString());
+
+                        return PaymentKt.toPayment(Objects.requireNonNull(paymentResponse));
                     }
                 });
     }

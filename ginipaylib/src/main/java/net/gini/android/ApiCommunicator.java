@@ -282,6 +282,20 @@ public class ApiCommunicator {
         return doRequestWithJsonArrayResponse(url, GET, checkNotNull(session));
     }
 
+    public Task<JSONObject> resolvePaymentRequests(final String id, final JSONObject body, final Session session) {
+        final String url = mBaseUri.buildUpon().path("/paymentRequests/").appendPath(id).appendPath("payment")
+                .toString();
+
+        return doRequestWithHeadersResponse(url, POST, body, checkNotNull(session));
+    }
+
+    public Task<JSONObject> getPayment(final String id, final Session session) {
+        final String url = mBaseUri.buildUpon().path("/paymentRequests/").appendPath(id).appendPath("payment")
+                .toString();
+
+        return doRequestWithJsonResponse(url, GET, checkNotNull(session));
+    }
+
     /**
      * Helper method to do a request that returns data in headers. The request is wrapped in a Task that will resolve to a
      * JSONObject.
