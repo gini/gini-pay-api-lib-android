@@ -190,8 +190,8 @@ public class DocumentTaskManagerTest {
         return Task.forResult(readJSONArrayFile("payment-requests.json"));
     }
 
-    private Task<JSONObject> createHeaderJSONTask() {
-        return Task.forResult(new JSONObject(Collections.singletonMap("location", "7b5a7f79-ae7c-4040-b6cf-25cde58ad937")));
+    private Task<JSONObject> createLocationHeaderJSONTask(String url) {
+        return Task.forResult(new JSONObject(Collections.singletonMap("location", url)));
     }
 
     private Task<JSONObject> createPaymentJSONTask() throws IOException, JSONException {
@@ -888,7 +888,8 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testCreatePaymentRequest() throws Exception {
-        when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class))).thenReturn(createHeaderJSONTask());
+        when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class)))
+                .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
 
         Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestBody("", "", "", "", "", "", ""));
         paymentRequestTask.waitForCompletion();
@@ -933,7 +934,8 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testResolvePaymentRequest() throws Exception {
-        when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class))).thenReturn(createHeaderJSONTask());
+        when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
+                .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937/payment"));
 
         Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentBody("", "", "", "", ""));
         paymentRequestTask.waitForCompletion();
