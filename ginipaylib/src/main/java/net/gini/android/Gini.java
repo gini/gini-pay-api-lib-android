@@ -20,6 +20,16 @@ public class Gini {
     }
 
     /**
+     * Get the instance of the DocumentManager. The DocumentTaskManager provides high level methods to handle
+     * document related tasks easily.
+     *
+     * Provides same functionality as {@link DocumentTaskManager} as suspend functions instead of {@link bolts.Task}
+     */
+    public DocumentManager getDocumentManager() {
+        return new DocumentManager(mDocumentTaskManager);
+    }
+
+    /**
      * Get the instance of the CredentialsStore implementation which is used to store user information. Handy to get
      * information on the "anonymous" user.
      */
