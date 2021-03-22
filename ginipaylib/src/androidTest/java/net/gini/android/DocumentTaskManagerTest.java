@@ -36,6 +36,8 @@ import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.Payment;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentRequest;
+import net.gini.android.models.PaymentRequestInput;
+import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
@@ -891,7 +893,7 @@ public class DocumentTaskManagerTest {
         when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class)))
                 .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestBody("", "", "", "", "", "", ""));
+        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestInput("", "", "", "", "", "", ""));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
@@ -937,7 +939,7 @@ public class DocumentTaskManagerTest {
         when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
                 .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937/payment"));
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentBody("", "", "", "", ""));
+        Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", ""));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();

@@ -19,6 +19,8 @@ import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.Payment;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentRequest;
+import net.gini.android.models.PaymentRequestInput;
+import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
 import net.gini.android.requests.ResolvePaymentBody;
@@ -584,9 +586,9 @@ public class GiniIntegrationTest {
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentBody resolvePaymentBody = new ResolvePaymentBody(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
+        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
 
-        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentBody);
+        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
         assertNotNull(resolvePaymentRequestTask.getResult());
     }
@@ -601,9 +603,9 @@ public class GiniIntegrationTest {
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentBody resolvePaymentBody = new ResolvePaymentBody(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
+        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
 
-        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentBody);
+        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
 
         Task<Payment> getPaymentRequestTask = gini.getDocumentTaskManager().getPayment(id);
@@ -631,7 +633,7 @@ public class GiniIntegrationTest {
         assertNotNull(listTask.getResult());
         final List<PaymentProvider> providers = listTask.getResult();
 
-        final PaymentRequestBody paymentRequest = new PaymentRequestBody(
+        final PaymentRequestInput paymentRequest = new PaymentRequestInput(
                 document.getUri().toString(),
                 providers.get(0).getId(),
                 Objects.requireNonNull(Objects.requireNonNull(extractions).get("paymentRecipient")).getValue(),

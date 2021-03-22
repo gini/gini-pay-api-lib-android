@@ -2,9 +2,10 @@ package net.gini.android.requests
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import net.gini.android.models.PaymentRequestInput
 
 @JsonClass(generateAdapter = true)
-data class PaymentRequestBody(
+internal data class PaymentRequestBody(
     @Json(name = "sourceDocumentLocation") val sourceDocumentLocation: String,
     @Json(name = "paymentProvider") val paymentProvider: String,
     @Json(name = "recipient") val recipient: String,
@@ -12,4 +13,8 @@ data class PaymentRequestBody(
     @Json(name = "bic") val bic: String,
     @Json(name = "amount") val amount: String,
     @Json(name = "purpose") val purpose: String,
+)
+
+internal fun PaymentRequestInput.toPaymentRequestBody() = PaymentRequestBody(
+    sourceDocumentLocation, paymentProvider, recipient, iban, bic, amount, purpose
 )

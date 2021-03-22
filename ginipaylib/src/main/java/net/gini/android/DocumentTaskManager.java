@@ -21,14 +21,18 @@ import net.gini.android.models.PaymentKt;
 import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentProviderKt;
 import net.gini.android.models.PaymentRequest;
+import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.PaymentRequestKt;
+import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
+import net.gini.android.requests.PaymentRequestBodyKt;
 import net.gini.android.requests.ResolvePaymentBody;
+import net.gini.android.requests.ResolvePaymentBodyKt;
+import net.gini.android.response.LocationResponse;
 import net.gini.android.response.PaymentProviderResponse;
 import net.gini.android.response.PaymentRequestResponse;
-import net.gini.android.response.LocationResponse;
 import net.gini.android.response.PaymentResponse;
 
 import org.json.JSONArray;
@@ -770,13 +774,13 @@ public class DocumentTaskManager {
                 });
     }
 
-    public Task<String> createPaymentRequest(final PaymentRequestBody paymentRequestBody) {
+    public Task<String> createPaymentRequest(final PaymentRequestInput paymentRequestInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) throws JSONException {
                 final Session session = task.getResult();
                 JsonAdapter<PaymentRequestBody> adapter = mMoshi.adapter(PaymentRequestBody.class);
-                String body = adapter.toJson(paymentRequestBody);
+                String body = adapter.toJson(PaymentRequestBodyKt.toPaymentRequestBody(paymentRequestInput));
 
                 return mApiCommunicator.postPaymentRequests(new JSONObject(body), session);
             }
@@ -837,13 +841,13 @@ public class DocumentTaskManager {
                 });
     }
 
-    public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentBody resolvePaymentBody) {
+    public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) throws JSONException {
                 final Session session = task.getResult();
                 JsonAdapter<ResolvePaymentBody> adapter = mMoshi.adapter(ResolvePaymentBody.class);
-                String body = adapter.toJson(resolvePaymentBody);
+                String body = adapter.toJson(ResolvePaymentBodyKt.toResolvePaymentBody(resolvePaymentInput));
 
                 return mApiCommunicator.resolvePaymentRequests(requestId, new JSONObject(body), session);
             }
