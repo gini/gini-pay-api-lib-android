@@ -6,7 +6,7 @@ import net.gini.android.models.PaymentRequestInput
 
 @JsonClass(generateAdapter = true)
 internal data class PaymentRequestBody(
-    @Json(name = "sourceDocumentLocation") val sourceDocumentLocation: String,
+    @Json(name = "sourceDocumentLocation") val sourceDocumentLocation: String? = null,
     @Json(name = "paymentProvider") val paymentProvider: String,
     @Json(name = "recipient") val recipient: String,
     @Json(name = "iban") val iban: String,

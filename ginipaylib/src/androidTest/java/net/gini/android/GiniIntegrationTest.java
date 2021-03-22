@@ -22,8 +22,6 @@ import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.SpecificExtraction;
-import net.gini.android.requests.PaymentRequestBody;
-import net.gini.android.requests.ResolvePaymentBody;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -634,13 +632,14 @@ public class GiniIntegrationTest {
         final List<PaymentProvider> providers = listTask.getResult();
 
         final PaymentRequestInput paymentRequest = new PaymentRequestInput(
-                document.getUri().toString(),
                 providers.get(0).getId(),
                 Objects.requireNonNull(Objects.requireNonNull(extractions).get("paymentRecipient")).getValue(),
                 Objects.requireNonNull(extractions.get("iban")).getValue(),
                 Objects.requireNonNull(extractions.get("bic")).getValue(),
                 Objects.requireNonNull(extractions.get("amountToPay")).getValue(),
-                Objects.requireNonNull(extractions.get("paymentPurpose")).getValue());
+                Objects.requireNonNull(extractions.get("paymentPurpose")).getValue(),
+                document.getUri().toString()
+        );
         return gini.getDocumentTaskManager().createPaymentRequest(paymentRequest);
     }
 
