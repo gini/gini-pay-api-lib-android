@@ -39,7 +39,7 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
      * @return the Document instance of the freshly created document.
      */
     suspend fun createPartialDocument(
-        byteArray: ByteArray,
+        document: ByteArray,
         contentType: String,
         filename: String? = null,
         documentType: DocumentTaskManager.DocumentType? = null,
@@ -47,9 +47,9 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
     ): Document = withContext(taskDispatcher) {
         suspendCancellableCoroutine { continuation ->
             val task = if (documentMetadata != null) {
-                documentTaskManager.createPartialDocument(byteArray, contentType, filename, documentType, documentMetadata)
+                documentTaskManager.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
             } else {
-                documentTaskManager.createPartialDocument(byteArray, contentType, filename, documentType)
+                documentTaskManager.createPartialDocument(document, contentType, filename, documentType)
             }
             continuation.resumeTask(task)
         }
