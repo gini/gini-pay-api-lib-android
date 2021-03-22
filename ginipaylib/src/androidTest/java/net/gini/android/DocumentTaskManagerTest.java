@@ -1,21 +1,5 @@
 package net.gini.android;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
-
-import static net.gini.android.Utils.CHARSET_UTF8;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,8 +24,6 @@ import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
-import net.gini.android.requests.PaymentRequestBody;
-import net.gini.android.requests.ResolvePaymentBody;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +49,20 @@ import java.util.List;
 import java.util.Map;
 
 import bolts.Task;
+
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static net.gini.android.Utils.CHARSET_UTF8;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @MediumTest
 @RunWith(AndroidJUnit4.class)
@@ -903,8 +899,8 @@ public class DocumentTaskManagerTest {
 
     private List<PaymentRequest> getPaymentRequests() {
         final List<PaymentRequest> paymentRequests = new ArrayList<>();
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test://paymentRequester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test2://paymentRequester", "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
         return paymentRequests;
     }
 

@@ -1,6 +1,7 @@
 [
   {
     "paymentProvider": "7e72441c-32f8-11eb-b611-c3190574373c",
+    "requesterUri": "gini-test://paymentRequester",
     "recipient": "Dr. med. Hackler",
     "iban": "DE02300209000106531065",
     "bic": "CMCIDEDDXXX",
@@ -16,6 +17,7 @@
   },
   {
     "paymentProvider": "7e72441c-32f8-11eb-b611-c3190574373c",
+    "requesterUri": "gini-test2://paymentRequester",
     "recipient": "Dr. med. dent. Wagner",
     "iban": "DE09900209000106531065",
     "bic": "CMCIDEDDXXX",

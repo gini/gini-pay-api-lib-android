@@ -5,6 +5,7 @@ import net.gini.android.response.PaymentRequestResponse
 
 data class PaymentRequest(
     val paymentProviderId: String,
+    val requesterUri: String,
     val recipient: String,
     val iban: String,
     val bic: String,
@@ -19,6 +20,7 @@ data class PaymentRequest(
 
 internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     paymentProviderId = paymentProvider,
+    requesterUri = requesterUri,
     recipient = recipient,
     iban = iban,
     bic = bic,

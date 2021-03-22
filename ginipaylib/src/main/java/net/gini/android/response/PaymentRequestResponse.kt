@@ -6,6 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 internal data class PaymentRequestResponse(
     @Json(name = "paymentProvider") val paymentProvider: String,
+    @Json(name = "requesterUri") val requesterUri: String,
     @Json(name = "recipient") val recipient: String,
     @Json(name = "iban") val iban: String,
     @Json(name = "bic") val bic: String,
