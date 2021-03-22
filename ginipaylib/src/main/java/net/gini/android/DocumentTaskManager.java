@@ -731,6 +731,11 @@ public class DocumentTaskManager {
         }, Task.BACKGROUND_EXECUTOR);
     }
 
+    /**
+     * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
+     *
+     * @return A list of {@link PaymentProvider}
+     */
     public Task<List<PaymentProvider>> getPaymentProviders() {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
             @Override
@@ -755,6 +760,9 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     * @return {@link PaymentProvider] for the given id.
+     */
     public Task<PaymentProvider> getPaymentProvider(final String id) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
@@ -774,6 +782,12 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     *  A {@link PaymentRequest} is used to have on the backend the intent of making a payment
+     *  for a document with its (modified) extractions and specific payment provider.
+     *
+     *  @return Id of the {@link PaymentRequest}
+     */
     public Task<String> createPaymentRequest(final PaymentRequestInput paymentRequestInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
@@ -798,6 +812,9 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     * @return {PaymentRequest} for the given id
+     */
     public Task<PaymentRequest> getPaymentRequest(final String id) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
@@ -817,6 +834,9 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     * @return List of payment {@link PaymentRequest}
+     */
     public Task<List<PaymentRequest>> getPaymentRequests() {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
             @Override
@@ -841,6 +861,12 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     * Mark a {@link PaymentRequest} as paid.
+     *
+     * @param requestId id of request
+     * @param resolvePaymentInput information of the actual payment
+     */
     public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
@@ -866,6 +892,11 @@ public class DocumentTaskManager {
                 });
     }
 
+    /**
+     * Get information about the payment of the {@link PaymentRequest}
+     *
+     * @param id of the paid {@link PaymentRequest}
+     */
     public Task<Payment> getPayment(final String id) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
