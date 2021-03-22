@@ -14,9 +14,9 @@ import net.gini.android.models.ExtractionsContainer
 import net.gini.android.models.Payment
 import net.gini.android.models.PaymentProvider
 import net.gini.android.models.PaymentRequest
+import net.gini.android.models.PaymentRequestInput
+import net.gini.android.models.ResolvePaymentInput
 import net.gini.android.models.SpecificExtraction
-import net.gini.android.requests.PaymentRequestBody
-import net.gini.android.requests.ResolvePaymentBody
 import org.json.JSONObject
 
 /**
@@ -182,10 +182,10 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
     }
 
     suspend fun createPaymentRequest(
-        paymentRequestBody: PaymentRequestBody,
+        paymentRequestInput: PaymentRequestInput,
     ): String = withContext(taskDispatcher) {
         suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.createPaymentRequest(paymentRequestBody)
+            val task = documentTaskManager.createPaymentRequest(paymentRequestInput)
             continuation.resumeTask(task)
         }
     }
@@ -208,10 +208,10 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
 
     suspend fun resolvePaymentRequest(
         requestId: String,
-        resolvePaymentBody: ResolvePaymentBody,
+        resolvePaymentInput: ResolvePaymentInput,
     ): String = withContext(taskDispatcher) {
         suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentBody)
+            val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentInput)
             continuation.resumeTask(task)
         }
     }
