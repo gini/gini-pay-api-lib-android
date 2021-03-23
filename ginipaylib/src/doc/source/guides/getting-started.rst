@@ -116,7 +116,7 @@ Configure Pinning
 -----------------
 
 The following sample configuration shows how to set the public key pin for the two domains Gini
-Pay API lib uses by default (``api.gini.net`` and ``user.gini.net``). It should be saved under
+Pay API lib uses by default (``pay-api.gini.net`` and ``user.gini.net``). It should be saved under
 ``res/xml/network_security_config.xml``:
 
 .. code-block:: xml
@@ -127,7 +127,7 @@ Pay API lib uses by default (``api.gini.net`` and ``user.gini.net``). It should 
             <trustkit-config
                 disableDefaultReportUri="true"
                 enforcePinning="true" />
-            <domain includeSubdomains="false">api.gini.net</domain>
+            <domain includeSubdomains="false">pay-api.gini.net</domain>
             <pin-set>
                 <!-- old *.gini.net public key-->
                 <pin digest="SHA-256">yGLLyvZLo2NNXeBNKJwx1PlCtm+YEVU6h2hxVpRa4l4=</pin>

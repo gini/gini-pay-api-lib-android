@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
  * The current supported APIs.
  */
 public enum GiniApiType {
-    DEFAULT("https://api.gini.net/",
+    DEFAULT("https://pay-api.gini.net/",
             GINI_JSON_V2,
             GINI_PARTIAL,
             GINI_DOCUMENT_JSON_V2),

@@ -39,7 +39,7 @@ public class BearerJsonObjectRequestTest {
                 null, session, GiniApiType.DEFAULT, null, null, retryPolicy);
 
         Map<String, String> headers = request.getHeaders();
-        assertEquals("application/json, application/vnd.gini.v2+json", headers.get("Accept"));
+        assertEquals("application/json, application/vnd.gini.v1+json", headers.get("Accept"));
     }
 
     @Test
