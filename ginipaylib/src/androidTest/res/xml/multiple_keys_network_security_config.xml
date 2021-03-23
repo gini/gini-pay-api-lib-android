@@ -4,7 +4,7 @@
         <trustkit-config
             disableDefaultReportUri="true"
             enforcePinning="true" />
-        <domain>api.gini.net</domain>
+        <domain>pay-api.gini.net</domain>
         <pin-set>
             <!-- *.gini.net -->
             <pin digest="SHA-256">cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=</pin>

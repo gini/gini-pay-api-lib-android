@@ -196,7 +196,7 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateDocumentResolvesToDocument() throws IOException, JSONException, InterruptedException {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class), any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
                 .thenReturn(Task.forResult(createdDocumentUri));
@@ -212,10 +212,10 @@ public class DocumentTaskManagerTest {
     @Test
     public void testThatCreateDocumentsSubmitsTheFileNameAndDocumentType()
             throws IOException, JSONException, InterruptedException {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class), any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -229,11 +229,11 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreatePartialDocumentSetsTheCorrectContentType() throws Exception {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class),
                 any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -250,11 +250,11 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateCompositeDocumentSetsTheCorrectContentType() throws Exception {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class),
                 any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -273,11 +273,11 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateCompositeDocumentUploadsCorrectJson() throws Exception {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class),
                 any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -286,8 +286,8 @@ public class DocumentTaskManagerTest {
         partialDocuments.add(createDocument("2222"));
 
         final String jsonString = "{ \"partialDocuments\": [ "
-                + "{ \"document\": \"https://api.gini.net/documents/1111\", \"rotationDelta\": 0 }, "
-                + "{ \"document\": \"https://api.gini.net/documents/2222\", \"rotationDelta\": 0 } "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/1111\", \"rotationDelta\": 0 }, "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/2222\", \"rotationDelta\": 0 } "
                 + "] }";
         final JSONObject jsonObject = new JSONObject(jsonString);
         final byte[] jsonBytes = jsonObject.toString().getBytes(CHARSET_UTF8);
@@ -303,11 +303,11 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateCompositeDocumentUploadsJsonWithRotation() throws Exception {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class),
                 any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -316,8 +316,8 @@ public class DocumentTaskManagerTest {
         partialDocuments.put(createDocument("2222"), 180);
 
         final String jsonString = "{ \"partialDocuments\": [ "
-                + "{ \"document\": \"https://api.gini.net/documents/1111\", \"rotationDelta\": 90 }, "
-                + "{ \"document\": \"https://api.gini.net/documents/2222\", \"rotationDelta\": 180 } "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/1111\", \"rotationDelta\": 90 }, "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/2222\", \"rotationDelta\": 180 } "
                 + "] }";
         final JSONObject jsonObject = new JSONObject(jsonString);
         final byte[] jsonBytes = jsonObject.toString().getBytes(CHARSET_UTF8);
@@ -333,11 +333,11 @@ public class DocumentTaskManagerTest {
 
     @Test
     public void testThatCreateCompositeDocumentUploadsJsonWithNormalizedRotation() throws Exception {
-        final Uri createdDocumentUri = Uri.parse("https://api.gini.net/documents/1234");
+        final Uri createdDocumentUri = Uri.parse("https://pay-api.gini.net/documents/1234");
         when(mApiCommunicator.uploadDocument(any(byte[].class), any(String.class),
                 any(String.class), any(String.class),
                 any(Session.class), any(DocumentMetadata.class)))
-                .thenReturn(Task.forResult(Uri.parse("https://api.gini.net/documents/1234")));
+                .thenReturn(Task.forResult(Uri.parse("https://pay-api.gini.net/documents/1234")));
         when(mApiCommunicator.getDocument(eq(createdDocumentUri), any(Session.class))).thenReturn(
                 createDocumentJSONTask("1234"));
 
@@ -346,8 +346,8 @@ public class DocumentTaskManagerTest {
         partialDocuments.put(createDocument("2222"), 450);
 
         final String jsonString = "{ \"partialDocuments\": [ "
-                + "{ \"document\": \"https://api.gini.net/documents/1111\", \"rotationDelta\": 270 }, "
-                + "{ \"document\": \"https://api.gini.net/documents/2222\", \"rotationDelta\": 90 } "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/1111\", \"rotationDelta\": 270 }, "
+                + "{ \"document\": \"https://pay-api.gini.net/documents/2222\", \"rotationDelta\": 90 } "
                 + "] }";
         final JSONObject jsonObject = new JSONObject(jsonString);
         final byte[] jsonBytes = jsonObject.toString().getBytes(CHARSET_UTF8);

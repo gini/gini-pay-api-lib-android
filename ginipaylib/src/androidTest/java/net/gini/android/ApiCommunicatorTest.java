@@ -55,7 +55,7 @@ public class ApiCommunicatorTest {
         System.setProperty("dexmaker.dexcache", getTargetContext().getCacheDir().getPath());
         retryPolicyFactory = new DefaultRetryPolicyFactory();
         mRequestQueue = Mockito.mock(RequestQueue.class);
-        mApiCommunicator = new ApiCommunicator("https://api.gini.net/", GiniApiType.DEFAULT, mRequestQueue, retryPolicyFactory);
+        mApiCommunicator = new ApiCommunicator("https://pay-api.gini.net/", GiniApiType.DEFAULT, mRequestQueue, retryPolicyFactory);
     }
 
     public byte[] createUploadData() {
@@ -79,7 +79,7 @@ public class ApiCommunicatorTest {
         }
 
         try {
-            new ApiCommunicator("https://api.gini.net", GiniApiType.DEFAULT, null, retryPolicyFactory);
+            new ApiCommunicator("https://pay-api.gini.net", GiniApiType.DEFAULT, null, retryPolicyFactory);
             fail("NullPointerException not thrown");
         } catch (NullPointerException ignored) {
         }
@@ -191,7 +191,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
 
-        assertEquals("https://api.gini.net/documents/", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/", request.getUrl());
         assertEquals(POST, request.getMethod());
     }
 
@@ -206,7 +206,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
 
-        assertEquals("https://api.gini.net/documents/?filename=foobar.jpg", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/?filename=foobar.jpg", request.getUrl());
     }
 
     @Test
@@ -220,7 +220,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
 
-        assertEquals("https://api.gini.net/documents/?doctype=invoice", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/?doctype=invoice", request.getUrl());
     }
 
     @Test
@@ -251,7 +251,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234", request.getUrl());
     }
 
     @Test
@@ -344,7 +344,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -402,7 +402,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234/extractions", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234/extractions", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -460,7 +460,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234/extractions", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234/extractions", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -524,7 +524,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertTrue(areEqualURIs("https://api.gini.net/documents/1234/errorreport?description=and%20a%20description&summary=short%20summary",
+        assertTrue(areEqualURIs("https://pay-api.gini.net/documents/1234/errorreport?description=and%20a%20description&summary=short%20summary",
                 request.getUrl()));
     }
 
@@ -588,7 +588,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234-1234/extractions/feedback", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234-1234/extractions/feedback", request.getUrl());
         assertEquals(PUT, request.getMethod());
     }
 
@@ -670,7 +670,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234/pages/1/1280x1810", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234/pages/1/1280x1810", request.getUrl());
     }
 
     @Test
@@ -682,7 +682,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234/pages/1/750x900", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234/pages/1/750x900", request.getUrl());
     }
 
     @Test
@@ -718,7 +718,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents/1234-4321/layout", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234-4321/layout", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -756,7 +756,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/documents?offset=0&limit=23", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents?offset=0&limit=23", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -794,7 +794,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/search?q=foo%20b%C3%A4r&offset=0&limit=20", request.getUrl());
+        assertEquals("https://pay-api.gini.net/search?q=foo%20b%C3%A4r&offset=0&limit=20", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 
@@ -807,7 +807,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://api.gini.net/search?q=foo%20b%C3%A4r&offset=0&limit=20&docType=invoice", request.getUrl());
+        assertEquals("https://pay-api.gini.net/search?q=foo%20b%C3%A4r&offset=0&limit=20&docType=invoice", request.getUrl());
         assertEquals(GET, request.getMethod());
     }
 

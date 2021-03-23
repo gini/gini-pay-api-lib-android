@@ -9,16 +9,16 @@
   "pages" : [
     {
       "images" : {
-        "750x900" : "http://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/pages/1/750x900",
-        "1280x1810" : "http://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/pages/1/1280x1810"
+        "750x900" : "http://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/pages/1/750x900",
+        "1280x1810" : "http://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/pages/1/1280x1810"
       },
       "pageNumber" : 1
     }
   ],
   "_links": {
-    "extractions": "https://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/extractions",
-    "layout": "https://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/layout",
-    "document": "https://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000",
-    "processed": "https://api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/processed"
+    "extractions": "https://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/extractions",
+    "layout": "https://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/layout",
+    "document": "https://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000",
+    "processed": "https://pay-api.gini.net/documents/626626a0-749f-11e2-bfd6-000000000000/processed"
   }
 }
