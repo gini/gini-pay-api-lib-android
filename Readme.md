@@ -28,7 +28,7 @@ You can easily integrate the Gini Pay API lib into your app using Gradle and our
     }
     
     dependencies {
-        compile ('net.gini:gini-pay-api-lib-android:1.0.0-beta01@aar'){
+        compile ('net.gini:gini-pay-api-lib-android:1.0.0-beta02@aar'){
             transitive = true
         }
         ...

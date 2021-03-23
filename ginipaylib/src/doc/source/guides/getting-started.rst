@@ -22,7 +22,7 @@ repository to your build script.
     }
 
     dependencies {
-        compile ('net.gini:gini-pay-api-lib-android:1.0.0-beta01@aar'){
+        compile ('net.gini:gini-pay-api-lib-android:1.0.0-beta02@aar'){
             transitive = true
         }
         ...
