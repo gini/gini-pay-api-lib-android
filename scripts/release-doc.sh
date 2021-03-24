@@ -23,10 +23,10 @@ rm -rf gh-pages
 git clone -b gh-pages https://"$git_user":"$git_password"@github.com/gini/gini-pay-api-lib-android.git gh-pages
 
 rm -rf gh-pages/*
-cp -a ginipaylib/build/docs/* gh-pages/
+cp -a ginipaylib/build/dokka/* gh-pages/
 cd gh-pages
 touch .nojekyll
 git add -u
 git add .
-git diff --quiet --exit-code --cached || git commit -a -m 'Gini Vision Library Integration Guide'
+git diff --quiet --exit-code --cached || git commit -a -m 'Gini Pay API lib docs'
 git push

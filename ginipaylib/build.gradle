@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka'
 
 configurations {
     upload
@@ -51,6 +52,8 @@ dependencies {
     androidTestImplementation "com.crittercism.dexmaker:dexmaker-mockito:1.4"
     androidTestImplementation "com.android.support.test:runner:1.0.2"
     androidTestImplementation "com.android.support.test:rules:1.0.2"
+
+    dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20'
 }
 
 apply from: file("repository.gradle")
@@ -162,3 +165,28 @@ android.libraryVariants.all { variant ->
 }
 
 apply from: rootProject.file('gradle/javadoc_coverage.gradle')
+
+dokkaHtml {
+    outputDirectory.set(file("$buildDir/dokka"))
+    dokkaSourceSets {
+        named("main") {
+            noAndroidSdkLink.set(false)
+
+            includes.from(files("module.md", packageDocumentationPaths(android.sourceSets.main.java.srcDirs[0])))
+        }
+    }
+}
+
+dokkaJavadoc {
+    outputDirectory.set(file("$buildDir/dokka-javadoc"))
+}
+
+static def packageDocumentationPaths(srcDir) {
+    def packageDocs = []
+    srcDir.eachFileRecurse {
+        if (it.name == 'package.md') {
+            packageDocs.add(it.getAbsolutePath())
+        }
+    }
+    return packageDocs
+}

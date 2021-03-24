@@ -82,7 +82,7 @@ pipeline {
             }
             steps {
                 withEnv(["PATH+=/usr/local/bin"]) {
-                    sh './gradlew ginipaylib:generateReleaseJavadoc'
+                    sh './gradlew ginipaylib:dokkaHtml'
                     sh 'scripts/generate-sphinx-doc.sh'
                 }
             }
