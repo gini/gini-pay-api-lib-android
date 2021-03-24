@@ -128,8 +128,7 @@ pipeline {
                 }
             }
             steps {
-                sh './gradlew ginipaylib:buildReleaseZip'
-                archiveArtifacts 'ginipaylib/build/distributions/*.zip'
+                archiveArtifacts 'ginipaylib/build/outputs/aar/*.aar'
                 sh './gradlew ginipaylib:uploadArchives -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW'
             }
         }
