@@ -280,6 +280,37 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
     }
 
     /**
+     * Get the extractions for the given documentId. Prefer getExtraction(Document) if you have a document instance.
+     *
+     * @param documentId The id of the Document for whose extractions are returned.
+     * @return [ExtractionsContainer] object.
+     */
+    suspend fun getExtractions(
+        documentId: String,
+    ) = withContext(taskDispatcher) {
+        val document = getDocument(documentId)
+        suspendCancellableCoroutine<ExtractionsContainer> { continuation ->
+            val pollDocumentTask = documentTaskManager.pollDocument(document)
+            pollDocumentTask.waitForCompletion()
+
+            if (!continuation.isActive) return@suspendCancellableCoroutine
+
+            if (!pollDocumentTask.isFaulted) {
+                val extractionTask = documentTaskManager.getAllExtractions(pollDocumentTask.result)
+                continuation.resumeTask(extractionTask)
+            } else {
+                continuation.resumeWithException(pollDocumentTask.error)
+            }
+
+            continuation.invokeOnCancellation {
+                if (!pollDocumentTask.isCompleted) {
+                    documentTaskManager.cancelDocumentPolling(document)
+                }
+            }
+        }
+    }
+
+    /**
      * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
      *
      * @return A list of [PaymentProvider]
