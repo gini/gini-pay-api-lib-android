@@ -19,6 +19,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import net.gini.android.authorization.Session;
+import net.gini.android.authorization.requests.BearerByteArrayRequest;
 import net.gini.android.authorization.requests.BearerHeadersRequest;
 import net.gini.android.authorization.requests.BearerJsonArrayRequest;
 import net.gini.android.authorization.requests.BearerJsonObjectRequest;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import bolts.Task;
 
@@ -296,6 +298,12 @@ public class ApiCommunicator {
         return doRequestWithJsonResponse(url, GET, checkNotNull(session));
     }
 
+    public Task<byte[]> getPageImage(@NonNull String documentId, int pageCount, final Session session) {
+        String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
+                .toString();
+        return doRequestWithByteArrayResponse(url, GET, session);
+    }
+
     /**
      * Helper method to do a request that returns data in headers. The request is wrapped in a Task that will resolve to a
      * JSONObject.
@@ -330,6 +338,24 @@ public class ApiCommunicator {
         final BearerJsonObjectRequest documentsRequest =
                 new BearerJsonObjectRequest(method, url, null, checkNotNull(session),
                         mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy());
+        mRequestQueue.add(documentsRequest);
+        return completionSource.getTask();
+    }
+
+    /**
+     * Helper method to do a request that returns byte data. The request is wrapped in a Task that will resolve to a
+     * byte[].
+     *
+     * @param url       The full URL of the request.
+     * @param method    The HTTP method of the request.
+     * @param session   A valid session for the Gini API.
+     * @return          A Task which will resolve to a byte[] representing the response of the Gini API.
+     */
+    private Task<byte[]> doRequestWithByteArrayResponse(final String url, int method, final Session session) {
+        final RequestTaskCompletionSource<byte[]> completionSource =
+                RequestTaskCompletionSource.newCompletionSource();
+        final BearerByteArrayRequest documentsRequest =
+                new BearerByteArrayRequest(method, url, checkNotNull(session), completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy());
         mRequestQueue.add(documentsRequest);
         return completionSource.getTask();
     }
