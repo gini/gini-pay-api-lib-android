@@ -371,6 +371,22 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
         }
     }
 
+    /**
+     * Get the rendered image of a page as byte[]
+     *
+     * @param documentId id of document
+     * @param page page of document
+     */
+    suspend fun getPageImage(
+        documentId: String,
+        page: Int
+    ): ByteArray = withContext(taskDispatcher) {
+        suspendCancellableCoroutine { continuation ->
+            val task = documentTaskManager.getPageImage(documentId, page)
+            continuation.resumeTask(task)
+        }
+    }
+
     private fun <T> Continuation<T>.resumeTask(task: Task<T>) {
         task.waitForCompletion()
         if (!task.isFaulted) {

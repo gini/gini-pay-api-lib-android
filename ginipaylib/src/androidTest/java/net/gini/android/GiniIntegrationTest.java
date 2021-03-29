@@ -2,6 +2,8 @@ package net.gini.android;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.test.filters.LargeTest;
 import android.support.test.filters.SdkSuppress;
@@ -614,6 +616,23 @@ public class GiniIntegrationTest {
         assertEquals(paymentRequest.getBic(), getPaymentRequestTask.getResult().getBic());
         assertEquals(paymentRequest.getAmount(), getPaymentRequestTask.getResult().getAmount());
         assertEquals(paymentRequest.getPurpose(), getPaymentRequestTask.getResult().getPurpose());
+    }
+
+    @Test
+    public void testGetImage() throws Exception {
+        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
+        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        Map<Document, Map<String, SpecificExtraction>> documentWithExtractions = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE);
+        Document document = documentWithExtractions.keySet().iterator().next();
+
+        Task<byte[]> task = gini.getDocumentTaskManager().getPageImage(document.getId(), 1);
+        task.waitForCompletion();
+        assertNotNull(task.getResult());
+        byte[] bytes = task.getResult();
+        assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
     }
 
     private Task<String> createPaymentRequest() throws Exception {

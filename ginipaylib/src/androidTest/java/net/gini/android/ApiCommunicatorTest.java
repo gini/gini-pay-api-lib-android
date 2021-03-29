@@ -862,4 +862,15 @@ public class ApiCommunicatorTest {
         value = (String) request.getHeaders().get(DocumentMetadata.HEADER_FIELD_NAME_PREFIX + customMetadataName);
         assertEquals(value, customMetadataValue);
     }
+
+    @Test
+    public void testGetApiUrl() {
+        mApiCommunicator.getPageImage("aa9a4630-8e05-11eb-ad19-3bfb1a96d239", 2, createSession());
+
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        verify(mRequestQueue).add(requestCaptor.capture());
+        final Request request = requestCaptor.getValue();
+
+        assertEquals("https://pay-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages/2/large", request.getUrl());
+    }
 }
