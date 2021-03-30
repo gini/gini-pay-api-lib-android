@@ -917,6 +917,22 @@ public class DocumentTaskManager {
     }
 
     /**
+     * Get the rendered image of a page as byte[]
+     *
+     * @param documentId id of document
+     * @param page page of document
+     */
+    public Task<byte[]> getPageImage(final String documentId, final int page) {
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<byte[]>>() {
+            @Override
+            public Task<byte[]> then(Task<Session> task) {
+                final Session session = task.getResult();
+                return mApiCommunicator.getPageImage(documentId, page, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR);
+    }
+
+    /**
      * Helper method which takes the JSON response of the Gini API as input and returns a mapping where the key is the
      * name of the candidates list (e.g. "amounts" or "dates") and the value is a list of extraction instances.
      *
