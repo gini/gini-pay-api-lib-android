@@ -2,7 +2,6 @@ package net.gini.android;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.test.filters.LargeTest;
@@ -586,7 +585,7 @@ public class GiniIntegrationTest {
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
+        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
         Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
@@ -603,7 +602,7 @@ public class GiniIntegrationTest {
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getBic(), paymentRequest.getAmount(), paymentRequest.getPurpose());
+        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
         Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
@@ -654,9 +653,10 @@ public class GiniIntegrationTest {
                 providers.get(0).getId(),
                 Objects.requireNonNull(Objects.requireNonNull(extractions).get("paymentRecipient")).getValue(),
                 Objects.requireNonNull(extractions.get("iban")).getValue(),
-                Objects.requireNonNull(extractions.get("bic")).getValue(),
                 Objects.requireNonNull(extractions.get("amountToPay")).getValue(),
                 Objects.requireNonNull(extractions.get("paymentPurpose")).getValue(),
+                null, // We make bic optional for now
+//                Objects.requireNonNull(extractions.get("bic")).getValue(),
                 document.getUri().toString()
         );
         return gini.getDocumentTaskManager().createPaymentRequest(paymentRequest);

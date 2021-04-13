@@ -889,7 +889,7 @@ public class DocumentTaskManagerTest {
         when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class)))
                 .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestInput("", "", "", "", "", "", ""));
+        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestInput("", "", "", "", "", null, ""));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
@@ -935,7 +935,7 @@ public class DocumentTaskManagerTest {
         when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
                 .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937/payment"));
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", ""));
+        Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
@@ -953,7 +953,7 @@ public class DocumentTaskManagerTest {
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
         }
-        Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z");
+        Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "335.50:EUR", "ReNr AZ356789Z", "CMCIDEDDXXX");
         assertEquals(payment, paymentRequestTask.getResult());
     }
 }

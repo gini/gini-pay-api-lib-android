@@ -8,7 +8,7 @@ data class PaymentRequest(
     val requesterUri: String,
     val recipient: String,
     val iban: String,
-    val bic: String,
+    val bic: String?,
     val amount: String,
     val purpose: String,
     val status: Status,
