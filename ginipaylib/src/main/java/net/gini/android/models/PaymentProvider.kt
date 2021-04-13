@@ -9,11 +9,15 @@ data class PaymentProvider(
     val id: String,
     val name: String,
     /**
+     * Package name of the bank app that corresponds to this provider.
+     */
+    val packageName: String,
+    /**
      * The minimal required app versions per platform
      */
     val appVersion: String,
 )
 
 internal fun PaymentProviderResponse.toPaymentProvider() = PaymentProvider(
-    id, name, minAppVersion.android
+    id, name, packageNameAndroid, minAppVersion.android
 )

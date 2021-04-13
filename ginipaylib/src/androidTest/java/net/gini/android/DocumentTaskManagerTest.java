@@ -879,8 +879,8 @@ public class DocumentTaskManagerTest {
 
     private List<PaymentProvider> getPaymentProviders() {
         final List<PaymentProvider> paymentProviders = new ArrayList<>();
-        paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "3.5.1"));
-        paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "6.9.1"));
+        paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "com.example.bank", "3.5.1"));
+        paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "com.example.bank", "6.9.1"));
         return paymentProviders;
     }
 
