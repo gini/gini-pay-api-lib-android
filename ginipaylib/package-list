@@ -9,6 +9,7 @@ $dokka.location:net.gini.android.models/Payment/<get-recipient>/#/PointingToDecl
 $dokka.location:net.gini.android.models/PaymentProvider/<get-appVersion>/#/PointingToDeclaration/net.gini.android.models/-payment-provider/get-app-version.html
 $dokka.location:net.gini.android.models/PaymentProvider/<get-id>/#/PointingToDeclaration/net.gini.android.models/-payment-provider/get-id.html
 $dokka.location:net.gini.android.models/PaymentProvider/<get-name>/#/PointingToDeclaration/net.gini.android.models/-payment-provider/get-name.html
+$dokka.location:net.gini.android.models/PaymentProvider/<get-packageName>/#/PointingToDeclaration/net.gini.android.models/-payment-provider/get-package-name.html
 $dokka.location:net.gini.android.models/PaymentRequest.Status/<get-name>/#/PointingToDeclaration/net.gini.android.models/-payment-request/-status/get-name.html
 $dokka.location:net.gini.android.models/PaymentRequest.Status/<get-ordinal>/#/PointingToDeclaration/net.gini.android.models/-payment-request/-status/get-ordinal.html
 $dokka.location:net.gini.android.models/PaymentRequest/<get-amount>/#/PointingToDeclaration/net.gini.android.models/-payment-request/get-amount.html
