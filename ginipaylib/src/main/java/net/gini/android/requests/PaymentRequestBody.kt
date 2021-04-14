@@ -10,11 +10,11 @@ internal data class PaymentRequestBody(
     @Json(name = "paymentProvider") val paymentProvider: String,
     @Json(name = "recipient") val recipient: String,
     @Json(name = "iban") val iban: String,
-    @Json(name = "bic") val bic: String,
     @Json(name = "amount") val amount: String,
     @Json(name = "purpose") val purpose: String,
+    @Json(name = "bic") val bic: String? = null,
 )
 
 internal fun PaymentRequestInput.toPaymentRequestBody() = PaymentRequestBody(
-    sourceDocumentLocation, paymentProvider, recipient, iban, bic, amount, purpose
+    sourceDocumentLocation, paymentProvider, recipient, iban, amount, purpose, bic
 )

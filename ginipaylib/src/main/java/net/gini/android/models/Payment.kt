@@ -6,11 +6,11 @@ data class Payment(
     val paidAt: String,
     val recipient: String,
     val iban: String,
-    val bic: String,
     val amount: String,
     val purpose: String,
+    val bic: String? = null,
 )
 
 internal fun PaymentResponse.toPayment() = Payment(
-    paidAt, recipient, iban, bic, amount, purpose
+    paidAt, recipient, iban, amount, purpose, bic
 )
