@@ -22,6 +22,7 @@ import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
+import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.SpecificExtraction;
 
 import org.json.JSONException;
@@ -587,7 +588,7 @@ public class GiniIntegrationTest {
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
         final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
-        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+        Task<ResolvedPayment> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
         assertNotNull(resolvePaymentRequestTask.getResult());
     }
@@ -604,7 +605,7 @@ public class GiniIntegrationTest {
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
         final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
-        Task<String> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+        Task<ResolvedPayment> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
 
         Task<Payment> getPaymentRequestTask = gini.getDocumentTaskManager().getPayment(id);
