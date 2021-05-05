@@ -24,6 +24,8 @@ import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.PaymentRequestKt;
 import net.gini.android.models.ResolvePaymentInput;
+import net.gini.android.models.ResolvedPayment;
+import net.gini.android.models.ResolvedPaymentKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
@@ -34,6 +36,7 @@ import net.gini.android.response.LocationResponse;
 import net.gini.android.response.PaymentProviderResponse;
 import net.gini.android.response.PaymentRequestResponse;
 import net.gini.android.response.PaymentResponse;
+import net.gini.android.response.ResolvePaymentResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -867,7 +870,7 @@ public class DocumentTaskManager {
      * @param requestId id of request
      * @param resolvePaymentInput information of the actual payment
      */
-    public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
+    public Task<ResolvedPayment> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) throws JSONException {
@@ -878,16 +881,13 @@ public class DocumentTaskManager {
                 return mApiCommunicator.resolvePaymentRequests(requestId, new JSONObject(body), session);
             }
         }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, String>() {
+                .onSuccess(new Continuation<JSONObject, ResolvedPayment>() {
                     @Override
-                    public String then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<LocationResponse> adapter = mMoshi.adapter(LocationResponse.class);
-                        LocationResponse locationResponse = adapter.fromJson(task.getResult().toString());
+                    public ResolvedPayment then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<ResolvePaymentResponse> adapter = mMoshi.adapter(ResolvePaymentResponse.class);
+                        ResolvePaymentResponse resolvePaymentResponse = adapter.fromJson(task.getResult().toString());
 
-                        String location = Objects.requireNonNull(locationResponse).getLocation();
-
-                        String[] segments = location.split("/");
-                        return segments[segments.length - 2];
+                        return ResolvedPaymentKt.toResolvedPayment(Objects.requireNonNull(resolvePaymentResponse));
                     }
                 });
     }
