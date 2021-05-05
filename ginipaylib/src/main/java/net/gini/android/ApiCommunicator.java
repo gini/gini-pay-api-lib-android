@@ -188,6 +188,23 @@ public class ApiCommunicator {
         return doRequestWithJsonResponse(url, POST, session);
     }
 
+    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
+            throws JSONException {
+        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions",
+                checkNotNull(documentId))).toString();
+        final RequestTaskCompletionSource<JSONObject> completionSource =
+                RequestTaskCompletionSource.newCompletionSource();
+        final JSONObject requestData = new JSONObject();
+        requestData.put("feedback", checkNotNull(extractions));
+        final BearerJsonObjectRequest request =
+                new BearerJsonObjectRequest(PUT, url, requestData, checkNotNull(session),
+                        mGiniApiType, completionSource, completionSource,
+                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
+        mRequestQueue.add(request);
+
+        return completionSource.getTask();
+    }
+
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
             final JSONObject compoundExtractions, final Session session)
             throws JSONException {
@@ -288,7 +305,7 @@ public class ApiCommunicator {
         final String url = mBaseUri.buildUpon().path("/paymentRequests/").appendPath(id).appendPath("payment")
                 .toString();
 
-        return doRequestWithHeadersResponse(url, POST, body, checkNotNull(session));
+        return doRequestWithBodyAndJsonResponse(url, POST, body, checkNotNull(session));
     }
 
     public Task<JSONObject> getPayment(final String id, final Session session) {
@@ -318,6 +335,25 @@ public class ApiCommunicator {
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerHeadersRequest documentsRequest =
                 new BearerHeadersRequest(method, url, body, checkNotNull(session),
+                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), MediaTypes.GINI_JSON_V1);
+        mRequestQueue.add(documentsRequest);
+        return completionSource.getTask();
+    }
+
+    /**
+     * Helper method to do a request that sends Json body and returns JSON data. The request is wrapped in a Task that will resolve to a
+     * JSONObject.
+     *
+     * @param url       The full URL of the request.
+     * @param method    The HTTP method of the request.
+     * @param session   A valid session for the Gini API.
+     * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
+     */
+    private Task<JSONObject> doRequestWithBodyAndJsonResponse(final String url, int method, final JSONObject body, final Session session) {
+        final RequestTaskCompletionSource<JSONObject> completionSource =
+                RequestTaskCompletionSource.newCompletionSource();
+        final BearerJsonObjectRequest documentsRequest =
+                new BearerJsonObjectRequest(method, url, body, checkNotNull(session),
                         mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), MediaTypes.GINI_JSON_V1);
         mRequestQueue.add(documentsRequest);
         return completionSource.getTask();

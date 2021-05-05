@@ -1,11 +1,10 @@
 package net.gini.android.models
 
 import java.util.*
-import net.gini.android.response.PaymentRequestResponse
+import net.gini.android.response.ResolvePaymentResponse
 
-data class PaymentRequest(
-    val paymentProviderId: String,
-    val requesterUri: String?,
+data class ResolvedPayment(
+    val requesterUri: String,
     val recipient: String,
     val iban: String,
     val bic: String?,
@@ -18,8 +17,7 @@ data class PaymentRequest(
     }
 }
 
-internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
-    paymentProviderId = paymentProvider,
+internal fun ResolvePaymentResponse.toResolvedPayment() = ResolvedPayment(
     requesterUri = requesterUri,
     recipient = recipient,
     iban = iban,
@@ -27,8 +25,8 @@ internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     amount = amount,
     purpose = purpose,
     status = when (status.toLowerCase(Locale.ENGLISH)) {
-        "open" -> PaymentRequest.Status.OPEN
-        "paid" -> PaymentRequest.Status.PAID
-        else -> PaymentRequest.Status.INVALID
+        "open" -> ResolvedPayment.Status.OPEN
+        "paid" -> ResolvedPayment.Status.PAID
+        else -> ResolvedPayment.Status.INVALID
     }
 )

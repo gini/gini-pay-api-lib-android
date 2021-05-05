@@ -22,6 +22,7 @@ import net.gini.android.models.PaymentProvider;
 import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
+import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 
@@ -186,6 +187,10 @@ public class DocumentTaskManagerTest {
 
     private Task<JSONArray> createPaymentRequestsJSONTask() throws IOException, JSONException {
         return Task.forResult(readJSONArrayFile("payment-requests.json"));
+    }
+
+    private Task<JSONObject> createResolvePaymentJsonTask() throws IOException, JSONException {
+        return Task.forResult(readJSONFile("resolved-payment.json"));
     }
 
     private Task<JSONObject> createLocationHeaderJSONTask(String url) {
@@ -899,8 +904,8 @@ public class DocumentTaskManagerTest {
 
     private List<PaymentRequest> getPaymentRequests() {
         final List<PaymentRequest> paymentRequests = new ArrayList<>();
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test://paymentRequester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test2://paymentRequester", "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
         return paymentRequests;
     }
 
@@ -933,14 +938,15 @@ public class DocumentTaskManagerTest {
     @Test
     public void testResolvePaymentRequest() throws Exception {
         when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
-                .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937/payment"));
+                .thenReturn(createResolvePaymentJsonTask());
 
-        Task<String> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
+        Task<ResolvedPayment> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
         paymentRequestTask.waitForCompletion();
         if (paymentRequestTask.isFaulted()) {
             throw paymentRequestTask.getError();
         }
-        assertEquals("7b5a7f79-ae7c-4040-b6cf-25cde58ad937", paymentRequestTask.getResult());
+        ResolvedPayment resolvedPayment = new ResolvedPayment("ginipay-example://payment-requester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", ResolvedPayment.Status.PAID);
+        assertEquals(resolvedPayment, paymentRequestTask.getResult());
     }
 
 

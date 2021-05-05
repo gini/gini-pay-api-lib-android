@@ -24,6 +24,8 @@ import net.gini.android.models.PaymentRequest;
 import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.PaymentRequestKt;
 import net.gini.android.models.ResolvePaymentInput;
+import net.gini.android.models.ResolvedPayment;
+import net.gini.android.models.ResolvedPaymentKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
 import net.gini.android.requests.PaymentRequestBody;
@@ -34,6 +36,7 @@ import net.gini.android.response.LocationResponse;
 import net.gini.android.response.PaymentProviderResponse;
 import net.gini.android.response.PaymentRequestResponse;
 import net.gini.android.response.PaymentResponse;
+import net.gini.android.response.ResolvePaymentResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -621,6 +624,51 @@ public class DocumentTaskManager {
      * on extractions" in
      * the Gini API documentation.
      *
+     * @param document    The document for which the extractions should be updated.
+     * @param extractions A Map where the key is the name of the specific extraction and the value is the
+     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                    method of this manager.
+     *
+     * @return A Task which will resolve to the same document instance when storing the updated
+     * extractions was successful.
+     *
+     * @throws JSONException When a value of an extraction is not JSON serializable.
+     */
+    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
+                                                     @NonNull final Map<String, SpecificExtraction> extractions)
+            throws JSONException {
+        final String documentId = document.getId();
+        final JSONObject feedbackForExtractions = new JSONObject();
+        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+            final Extraction extraction = entry.getValue();
+            final JSONObject extractionData = new JSONObject();
+            extractionData.put("value", extraction.getValue());
+            extractionData.put("entity", extraction.getEntity());
+            feedbackForExtractions.put(entry.getKey(), extractionData);
+        }
+
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) throws Exception {
+                final Session session = task.getResult();
+                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
+            @Override
+            public Document then(Task<JSONObject> task) throws Exception {
+                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+                    entry.getValue().setIsDirty(false);
+                }
+                return document;
+            }
+        }, Task.BACKGROUND_EXECUTOR);
+    }
+
+    /**
+     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+     * on extractions" in
+     * the Gini API documentation.
+     *
      * @param document            The document for which the extractions should be updated.
      * @param extractions         A Map where the key is the name of the specific extraction and the value is the
      *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
@@ -867,7 +915,7 @@ public class DocumentTaskManager {
      * @param requestId id of request
      * @param resolvePaymentInput information of the actual payment
      */
-    public Task<String> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
+    public Task<ResolvedPayment> resolvePaymentRequest(final String requestId, final ResolvePaymentInput resolvePaymentInput) {
         return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) throws JSONException {
@@ -878,16 +926,13 @@ public class DocumentTaskManager {
                 return mApiCommunicator.resolvePaymentRequests(requestId, new JSONObject(body), session);
             }
         }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, String>() {
+                .onSuccess(new Continuation<JSONObject, ResolvedPayment>() {
                     @Override
-                    public String then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<LocationResponse> adapter = mMoshi.adapter(LocationResponse.class);
-                        LocationResponse locationResponse = adapter.fromJson(task.getResult().toString());
+                    public ResolvedPayment then(Task<JSONObject> task) throws Exception {
+                        JsonAdapter<ResolvePaymentResponse> adapter = mMoshi.adapter(ResolvePaymentResponse.class);
+                        ResolvePaymentResponse resolvePaymentResponse = adapter.fromJson(task.getResult().toString());
 
-                        String location = Objects.requireNonNull(locationResponse).getLocation();
-
-                        String[] segments = location.split("/");
-                        return segments[segments.length - 2];
+                        return ResolvedPaymentKt.toResolvedPayment(Objects.requireNonNull(resolvePaymentResponse));
                     }
                 });
     }

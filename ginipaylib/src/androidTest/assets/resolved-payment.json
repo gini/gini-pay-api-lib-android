@@ -1,7 +1,8 @@
 {
-  "paymentProvider": "7e72441c-32f8-11eb-b611-c3190574373c",
+  "createdAt": "2020-12-07T15:50:23",
   "recipient": "Dr. med. Hackler",
   "iban": "DE02300209000106531065",
+  "requesterUri": "ginipay-example://payment-requester",
   "bic": "CMCIDEDDXXX",
   "amount": "335.50:EUR",
   "purpose": "ReNr AZ356789Z",

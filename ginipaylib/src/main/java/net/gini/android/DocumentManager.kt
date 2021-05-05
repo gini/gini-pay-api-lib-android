@@ -16,6 +16,7 @@ import net.gini.android.models.PaymentProvider
 import net.gini.android.models.PaymentRequest
 import net.gini.android.models.PaymentRequestInput
 import net.gini.android.models.ResolvePaymentInput
+import net.gini.android.models.ResolvedPayment
 import net.gini.android.models.SpecificExtraction
 import org.json.JSONException
 import org.json.JSONObject
@@ -350,7 +351,7 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
     suspend fun resolvePaymentRequest(
         requestId: String,
         resolvePaymentInput: ResolvePaymentInput,
-    ): String = withContext(taskDispatcher) {
+    ): ResolvedPayment = withContext(taskDispatcher) {
         suspendCancellableCoroutine { continuation ->
             val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentInput)
             continuation.resumeTask(task)
