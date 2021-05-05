@@ -188,6 +188,23 @@ public class ApiCommunicator {
         return doRequestWithJsonResponse(url, POST, session);
     }
 
+    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
+            throws JSONException {
+        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions",
+                checkNotNull(documentId))).toString();
+        final RequestTaskCompletionSource<JSONObject> completionSource =
+                RequestTaskCompletionSource.newCompletionSource();
+        final JSONObject requestData = new JSONObject();
+        requestData.put("feedback", checkNotNull(extractions));
+        final BearerJsonObjectRequest request =
+                new BearerJsonObjectRequest(PUT, url, requestData, checkNotNull(session),
+                        mGiniApiType, completionSource, completionSource,
+                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
+        mRequestQueue.add(request);
+
+        return completionSource.getTask();
+    }
+
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
             final JSONObject compoundExtractions, final Session session)
             throws JSONException {

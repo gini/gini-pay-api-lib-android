@@ -624,6 +624,51 @@ public class DocumentTaskManager {
      * on extractions" in
      * the Gini API documentation.
      *
+     * @param document    The document for which the extractions should be updated.
+     * @param extractions A Map where the key is the name of the specific extraction and the value is the
+     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                    method of this manager.
+     *
+     * @return A Task which will resolve to the same document instance when storing the updated
+     * extractions was successful.
+     *
+     * @throws JSONException When a value of an extraction is not JSON serializable.
+     */
+    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
+                                                     @NonNull final Map<String, SpecificExtraction> extractions)
+            throws JSONException {
+        final String documentId = document.getId();
+        final JSONObject feedbackForExtractions = new JSONObject();
+        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+            final Extraction extraction = entry.getValue();
+            final JSONObject extractionData = new JSONObject();
+            extractionData.put("value", extraction.getValue());
+            extractionData.put("entity", extraction.getEntity());
+            feedbackForExtractions.put(entry.getKey(), extractionData);
+        }
+
+        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+            @Override
+            public Task<JSONObject> then(Task<Session> task) throws Exception {
+                final Session session = task.getResult();
+                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, session);
+            }
+        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
+            @Override
+            public Document then(Task<JSONObject> task) throws Exception {
+                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+                    entry.getValue().setIsDirty(false);
+                }
+                return document;
+            }
+        }, Task.BACKGROUND_EXECUTOR);
+    }
+
+    /**
+     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+     * on extractions" in
+     * the Gini API documentation.
+     *
      * @param document            The document for which the extractions should be updated.
      * @param extractions         A Map where the key is the name of the specific extraction and the value is the
      *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
