@@ -904,8 +904,8 @@ public class DocumentTaskManagerTest {
 
     private List<PaymentRequest> getPaymentRequests() {
         final List<PaymentRequest> paymentRequests = new ArrayList<>();
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test://paymentRequester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
-        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", "gini-test2://paymentRequester", "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
+        paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. dent. Wagner", "DE09900209000106531065", "CMCIDEDDXXX", "135.50:EUR", "ReNr BZ056789", PaymentRequest.Status.PAID));
         return paymentRequests;
     }
 
