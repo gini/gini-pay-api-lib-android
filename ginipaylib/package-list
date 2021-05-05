@@ -32,6 +32,22 @@ $dokka.location:net.gini.android.models/ResolvePaymentInput/<get-bic>/#/Pointing
 $dokka.location:net.gini.android.models/ResolvePaymentInput/<get-iban>/#/PointingToDeclaration/net.gini.android.models/-resolve-payment-input/get-iban.html
 $dokka.location:net.gini.android.models/ResolvePaymentInput/<get-purpose>/#/PointingToDeclaration/net.gini.android.models/-resolve-payment-input/get-purpose.html
 $dokka.location:net.gini.android.models/ResolvePaymentInput/<get-recipient>/#/PointingToDeclaration/net.gini.android.models/-resolve-payment-input/get-recipient.html
+$dokka.location:net.gini.android.models/ResolvedPayment.Status/<get-name>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/-status/get-name.html
+$dokka.location:net.gini.android.models/ResolvedPayment.Status/<get-ordinal>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/-status/get-ordinal.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-amount>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-amount.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-bic>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-bic.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-iban>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-iban.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-purpose>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-purpose.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-recipient>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-recipient.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-requesterUri>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-requester-uri.html
+$dokka.location:net.gini.android.models/ResolvedPayment/<get-status>/#/PointingToDeclaration/net.gini.android.models/-resolved-payment/get-status.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-amount>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-amount.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-bic>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-bic.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-iban>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-iban.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-purpose>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-purpose.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-recipient>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-recipient.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-requesterUri>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-requester-uri.html
+$dokka.location:net.gini.android.response/ResolvePaymentResponse/<get-status>/#/PointingToDeclaration/net.gini.android.response/-resolve-payment-response/get-status.html
 net.gini.android
 net.gini.android.authorization
 net.gini.android.authorization.crypto
@@ -39,4 +55,5 @@ net.gini.android.authorization.requests
 net.gini.android.internal
 net.gini.android.models
 net.gini.android.requests
+net.gini.android.response
 
