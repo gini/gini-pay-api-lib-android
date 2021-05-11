@@ -134,8 +134,19 @@ android.libraryVariants.all { variant ->
     }
 }
 
+task sourcesJar(type: Jar, dependsOn: 'assembleRelease') {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    archiveClassifier.set('javadoc')
+    from dokkaJavadoc.outputDirectory
+}
+
 artifacts {
-    upload file('build/outputs/aar/ginipaylib-release.aar')
+    archives sourcesJar
+    archives javadocJar
 }
 
 android.libraryVariants.all { variant ->
