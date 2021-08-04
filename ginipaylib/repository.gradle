@@ -4,7 +4,6 @@ apply plugin: 'maven'
 // repoUser=<your user name>
 // repoPassword=<your password>
 uploadArchives {
-    configuration = configurations.upload
     repositories {
         mavenDeployer {
             pom.groupId = groupId
@@ -32,7 +31,6 @@ uploadArchives {
 
             if (project.hasProperty('mavenLocalRepoUrl')) {
                 repository(url: mavenLocalRepoUrl) {
-                    uniqueVersion = false
                 }
             }
         }
