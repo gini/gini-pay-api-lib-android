@@ -1,6 +1,1 @@
-Jinja2==2.10.1
-MarkupSafe==0.23
-Pygments==2.0.1
-Sphinx==1.2.3
-docutils==0.12
 -e git+git@github.com:gini/gini_sphinx_theme_sdk.git#egg=gini_sphinx_theme-master
