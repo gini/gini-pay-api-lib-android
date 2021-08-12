@@ -26,7 +26,7 @@ internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     bic = bic,
     amount = amount,
     purpose = purpose,
-    status = when (status.toLowerCase(Locale.ENGLISH)) {
+    status = when (status.lowercase(Locale.ENGLISH)) {
         "open" -> PaymentRequest.Status.OPEN
         "paid" -> PaymentRequest.Status.PAID
         else -> PaymentRequest.Status.INVALID

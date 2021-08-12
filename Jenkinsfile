@@ -128,8 +128,7 @@ pipeline {
                 }
             }
             steps {
-                archiveArtifacts 'ginipaylib/build/outputs/aar/*.aar'
-                sh './gradlew ginipaylib:uploadArchives -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW'
+                sh './gradlew ginipaylib:publishReleasePublicationToOpenRepository -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW'
             }
         }
     }
