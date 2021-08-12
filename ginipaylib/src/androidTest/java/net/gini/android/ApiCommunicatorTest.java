@@ -1,7 +1,7 @@
 package net.gini.android;
 
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static com.android.volley.Request.Method.DELETE;
 import static com.android.volley.Request.Method.GET;
@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 
 import android.net.Uri;
-import android.support.test.filters.MediumTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.MediumTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -52,7 +52,7 @@ public class ApiCommunicatorTest {
     @Before
     public void setUp() {
         // https://code.google.com/p/dexmaker/issues/detail?id=2
-        System.setProperty("dexmaker.dexcache", getTargetContext().getCacheDir().getPath());
+        System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
         retryPolicyFactory = new DefaultRetryPolicyFactory();
         mRequestQueue = Mockito.mock(RequestQueue.class);
         mApiCommunicator = new ApiCommunicator("https://pay-api.gini.net/", GiniApiType.DEFAULT, mRequestQueue, retryPolicyFactory);

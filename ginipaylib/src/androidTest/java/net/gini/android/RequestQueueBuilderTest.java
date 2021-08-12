@@ -1,12 +1,12 @@
 package net.gini.android;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NoCache;
@@ -20,7 +20,7 @@ public class RequestQueueBuilderTest {
 
     @Test
     public void testCreateDefaultRequestQueue() throws Exception {
-        RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(getTargetContext());
+        RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(getApplicationContext());
         RequestQueue requestQueue = requestQueueBuilder.build();
 
         assertNotNull(requestQueue);
@@ -28,7 +28,7 @@ public class RequestQueueBuilderTest {
 
     @Test
     public void testCacheConfiguration() {
-        RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(getTargetContext());
+        RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(getApplicationContext());
         NoCache cache = new NoCache();
         RequestQueue requestQueue = requestQueueBuilder
                 .setCache(cache)

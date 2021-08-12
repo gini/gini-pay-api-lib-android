@@ -1,14 +1,14 @@
 package net.gini.android.models;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static net.gini.android.helpers.ParcelHelper.doRoundTrip;
 
 import static org.junit.Assert.assertEquals;
 
 import android.net.Uri;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +29,7 @@ public class DocumentTest {
     }
 
     private JSONObject createDocumentJSON(final String fileName) throws IOException, JSONException {
-        InputStream is = getTargetContext().getResources().getAssets().open(fileName);
+        InputStream is = getApplicationContext().getResources().getAssets().open(fileName);
 
         int size = is.available();
         byte[] buffer = new byte[size];

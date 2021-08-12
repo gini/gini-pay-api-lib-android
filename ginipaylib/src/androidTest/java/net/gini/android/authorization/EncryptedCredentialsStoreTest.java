@@ -1,14 +1,14 @@
 package net.gini.android.authorization;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.SharedPreferences;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.gini.android.authorization.crypto.GiniCryptoHelper;
 
@@ -30,10 +30,10 @@ public class EncryptedCredentialsStoreTest {
 
     @Before
     public void setUp() throws Exception {
-        mSharedPreferences = getTargetContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
+        mSharedPreferences = getApplicationContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
         mSharedPreferences.edit().clear().commit();
 
-        mCredentialsStore = new EncryptedCredentialsStore(mSharedPreferences, getTargetContext());
+        mCredentialsStore = new EncryptedCredentialsStore(mSharedPreferences, getApplicationContext());
     }
 
     @After

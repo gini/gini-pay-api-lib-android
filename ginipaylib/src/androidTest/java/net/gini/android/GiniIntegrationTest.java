@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.support.test.filters.LargeTest;
-import android.support.test.filters.SdkSuppress;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.filters.SdkSuppress;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 
 import com.android.volley.toolbox.NoCache;
@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import bolts.Continuation;
 import bolts.Task;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -65,7 +65,7 @@ public class GiniIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testPropertiesInput = assetManager.open("test.properties");
         assertNotNull("test.properties not found", testPropertiesInput);
         final Properties testProperties = new Properties();
@@ -82,7 +82,7 @@ public class GiniIntegrationTest {
 
         resetTrustKit();
 
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -97,7 +97,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void processDocumentByteArray() throws IOException, InterruptedException, JSONException {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -107,14 +107,14 @@ public class GiniIntegrationTest {
 
     @Test
     public void processDocumentWithCustomCache() throws IOException, JSONException, InterruptedException {
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 setCache(new NoCache()).
                 build();
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -124,7 +124,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void sendFeedback() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -156,8 +156,8 @@ public class GiniIntegrationTest {
     @Test
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
-                getTargetContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getTargetContext());
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+                getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -168,7 +168,7 @@ public class GiniIntegrationTest {
         UserCredentials invalidUserCredentials = new UserCredentials("invalid@example.com", "1234");
         credentialsStore.storeUserCredentials(invalidUserCredentials);
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -183,15 +183,15 @@ public class GiniIntegrationTest {
     public void emailDomainIsUpdatedForExistingUserIfEmailDomainWasChanged() throws IOException, JSONException, InterruptedException {
         // Upload a document to make sure we have a valid user
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
-                getTargetContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getTargetContext());
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+                getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 setCredentialsStore(credentialsStore).
                 build();
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -201,7 +201,7 @@ public class GiniIntegrationTest {
         // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
         String newEmailDomain = "beispiel.com";
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, newEmailDomain).
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -217,13 +217,13 @@ public class GiniIntegrationTest {
     @Test
     public void publicKeyPinningWithMatchingPublicKey() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 build();
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -234,7 +234,7 @@ public class GiniIntegrationTest {
     @Test
     public void publicKeyPinningWithCustomCache() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -242,7 +242,7 @@ public class GiniIntegrationTest {
                 setCache(new NoCache()).
                 build();
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -254,14 +254,14 @@ public class GiniIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithWrongPublicKey() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.wrong_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 build();
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -297,14 +297,14 @@ public class GiniIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithMultiplePublicKeys() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getTargetContext(), clientId, clientSecret, "example.com").
+        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.multiple_keys_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 build();
 
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -314,7 +314,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void createPartialDocument() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", testDocumentAsStream);
 
@@ -330,7 +330,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void deletePartialDocumentWithoutParents() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", testDocumentAsStream);
 
@@ -351,7 +351,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void deletePartialDocumentWithParents() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream page1Stream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream);
 
@@ -382,7 +382,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void deletePartialDocumentFailsWhenNotDeletingParents() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream page1Stream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream);
 
@@ -413,7 +413,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void processCompositeDocument() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream page1Stream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream);
         final InputStream page2Stream = assetManager.open("multi-page-p2.png");
@@ -509,7 +509,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void testDeleteCompositeDocument() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream page1Stream = assetManager.open("multi-page-p1.png");
         assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream);
 
@@ -620,7 +620,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void testGetImage() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
@@ -636,7 +636,7 @@ public class GiniIntegrationTest {
     }
 
     private Task<String> createPaymentRequest() throws Exception {
-        final AssetManager assetManager = getTargetContext().getResources().getAssets();
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 

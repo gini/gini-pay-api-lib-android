@@ -1,6 +1,6 @@
 package net.gini.android.authorization;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static net.gini.android.helpers.TestUtils.areEqualURIQueries;
 
@@ -10,8 +10,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import android.os.SystemClock;
-import android.support.test.filters.MediumTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.MediumTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -45,7 +45,7 @@ public class UserCenterAPICommunicatorTest {
     @Before
     public void setUp() {
         // https://code.google.com/p/dexmaker/issues/detail?id=2
-        System.setProperty("dexmaker.dexcache", getTargetContext().getCacheDir().getPath());
+        System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
         retryPolicyFactory = new DefaultRetryPolicyFactory();
         mRequestQueue = Mockito.mock(RequestQueue.class);
         apiManager = new UserCenterAPICommunicator(mRequestQueue, "https://user.gini.net/", GiniApiType.DEFAULT, "foobar", "1234",
