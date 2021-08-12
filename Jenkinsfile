@@ -6,6 +6,7 @@ pipeline {
         GIT = credentials('github')
         GINI_API_CREDENTIALS = credentials('gini-vision-library-android_gini-api-client-credentials')
         GINI_ACCOUNTING_API_CREDENTIALS = credentials('gini-vision-library-android_gini-accounting-api-client-credentials')
+        JAVA11 = '/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home'
     }
     stages {
         stage('Import Pipeline Libraries') {
@@ -15,7 +16,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh './gradlew ginipaylib:clean ginipaylib:assembleDebug ginipaylib:assembleRelease'
+                sh './gradlew ginipaylib:clean ginipaylib:assembleDebug ginipaylib:assembleRelease -Dorg.gradle.java.home=$JAVA11'
             }
         }
         stage('Create AVDs') {
@@ -33,8 +34,15 @@ pipeline {
                     def emulatorPort = emulator.start(avd.createName("api-26-nexus-5x"), "nexus_5x", "-prop persist.sys.language=en -prop persist.sys.country=US -gpu on -camera-back emulated -no-snapshot-save -no-snapshot-load")
                     sh "echo $emulatorPort > emulator_port"
                     adb.setAnimationDurationScale("emulator-$emulatorPort", 0)
-                    withEnv(["PATH+TOOLS=$ANDROID_HOME/tools", "PATH+TOOLS_BIN=$ANDROID_HOME/tools/bin", "PATH+PLATFORM_TOOLS=$ANDROID_HOME/platform-tools"]) {
-                        sh "ANDROID_SERIAL=emulator-$emulatorPort ./gradlew ginipaylib:connectedAndroidTest -PtestClientId=$GINI_API_CREDENTIALS_USR -PtestClientSecret=$GINI_API_CREDENTIALS_PSW -PtestClientIdAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_USR -PtestClientSecretAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_PSW -PtestApiUri='https://pay-api.gini.net' -PtestApiUriAccounting='https://accounting-api.gini.net' -PtestUserCenterUri='https://user.gini.net'"
+                    withEnv(["EMULATOR_PORT=$emulatorPort", "PATH+TOOLS=$ANDROID_HOME/tools", "PATH+TOOLS_BIN=$ANDROID_HOME/tools/bin", "PATH+PLATFORM_TOOLS=$ANDROID_HOME/platform-tools"]) {
+                        sh '''
+                            ANDROID_SERIAL=emulator-$EMULATOR_PORT ./gradlew ginipaylib:connectedAndroidTest \
+                            -PtestClientId=$GINI_API_CREDENTIALS_USR -PtestClientSecret=$GINI_API_CREDENTIALS_PSW \
+                            -PtestClientIdAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_USR -PtestClientSecretAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_PSW \
+                            -PtestApiUri='https://pay-api.gini.net' -PtestApiUriAccounting='https://accounting-api.gini.net' \
+                            -PtestUserCenterUri='https://user.gini.net' \
+                            -Dorg.gradle.java.home=$JAVA11
+                        '''
                     }
                 }
             }
@@ -56,8 +64,15 @@ pipeline {
                     def emulatorPort = emulator.start(avd.createName("api-22-nexus-5x"), "nexus_5x", "-prop persist.sys.language=en -prop persist.sys.country=US -gpu on -camera-back emulated -no-snapshot-save -no-snapshot-load")
                     sh "echo $emulatorPort > emulator_port"
                     adb.setAnimationDurationScale("emulator-$emulatorPort", 0)
-                    withEnv(["PATH+TOOLS=$ANDROID_HOME/tools", "PATH+TOOLS_BIN=$ANDROID_HOME/tools/bin", "PATH+PLATFORM_TOOLS=$ANDROID_HOME/platform-tools"]) {
-                        sh "ANDROID_SERIAL=emulator-$emulatorPort ./gradlew ginipaylib:connectedAndroidTest -PtestClientId=$GINI_API_CREDENTIALS_USR -PtestClientSecret=$GINI_API_CREDENTIALS_PSW -PtestClientIdAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_USR -PtestClientSecretAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_PSW -PtestApiUri='https://pay-api.gini.net' -PtestApiUriAccounting='https://accounting-api.gini.net' -PtestUserCenterUri='https://user.gini.net'"
+                    withEnv(["EMULATOR_PORT=$emulatorPort", "PATH+TOOLS=$ANDROID_HOME/tools", "PATH+TOOLS_BIN=$ANDROID_HOME/tools/bin", "PATH+PLATFORM_TOOLS=$ANDROID_HOME/platform-tools"]) {
+                        sh '''
+                            ANDROID_SERIAL=emulator-$EMULATOR_PORT ./gradlew ginipaylib:connectedAndroidTest \
+                            -PtestClientId=$GINI_API_CREDENTIALS_USR -PtestClientSecret=$GINI_API_CREDENTIALS_PSW \
+                            -PtestClientIdAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_USR -PtestClientSecretAccounting=$GINI_ACCOUNTING_API_CREDENTIALS_PSW \
+                            -PtestApiUri='https://pay-api.gini.net' -PtestApiUriAccounting='https://accounting-api.gini.net' \
+                            -PtestUserCenterUri='https://user.gini.net' \
+                            -Dorg.gradle.java.home=$JAVA11
+                        '''
                     }
                 }
             }
@@ -82,7 +97,7 @@ pipeline {
             }
             steps {
                 withEnv(["PATH+=/usr/local/bin"]) {
-                    sh './gradlew ginipaylib:dokkaHtml'
+                    sh './gradlew ginipaylib:dokkaHtml -Dorg.gradle.java.home=$JAVA11'
                     sh 'scripts/generate-sphinx-doc.sh'
                 }
             }
@@ -128,7 +143,12 @@ pipeline {
                 }
             }
             steps {
-                sh './gradlew ginipaylib:publishReleasePublicationToOpenRepository -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW'
+                sh '''
+                    ./gradlew ginipaylib:publishReleasePublicationToOpenRepository \
+                    -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open \
+                    -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW' \
+                    -Dorg.gradle.java.home=$JAVA11
+                '''
             }
         }
     }
