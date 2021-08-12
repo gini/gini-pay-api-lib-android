@@ -76,23 +76,6 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
 
 Congratulations, you successfully integrated the Gini Pay.
 
-Using the Gini Accounting API
-=============================
-
-In version 2.3.0 we added support for the Gini Accounting API. To use it simply set the Gini API type
-to `GiniApiType.ACCOUNTING` when using the `SdkBuilder`:
-
-.. code-block:: java
-
-    Gini gini = new SdkBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
-            .setGiniApiType(GiniApiType.ACCOUNTING)
-            .build();
-
-.. warning::
-
-    Multi-page documents are not supported with the Gini Accounting API. Use only the
-    `DocumentTaskManager#createDocument()` methods to upload documents.
-
 Public Key Pinning
 ==================
 

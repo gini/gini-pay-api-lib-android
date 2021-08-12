@@ -124,7 +124,7 @@ task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
 apply from: rootProject.file('gradle/javadoc_coverage.gradle')
 
 dokkaHtml {
-    outputDirectory.set(file("$buildDir/dokka"))
+    outputDirectory.set(file("$buildDir/docs/dokka"))
     dokkaSourceSets {
         named("main") {
             noAndroidSdkLink.set(false)
@@ -135,7 +135,7 @@ dokkaHtml {
 }
 
 dokkaJavadoc {
-    outputDirectory.set(file("$buildDir/dokka-javadoc"))
+    outputDirectory.set(file("$buildDir/docs/dokka-javadoc"))
 }
 
 static def packageDocumentationPaths(srcDir) {
