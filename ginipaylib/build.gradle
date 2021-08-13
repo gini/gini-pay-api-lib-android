@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:1.0.2"
     androidTestImplementation "com.android.support.test:rules:1.0.2"
 
-    dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20'
+    dokkaHtmlPlugin "org.jetbrains.dokka:kotlin-as-java-plugin:$dokka_version"
 }
 
 apply from: file("repository.gradle")
