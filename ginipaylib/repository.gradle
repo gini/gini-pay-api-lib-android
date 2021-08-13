@@ -1,36 +1,64 @@
-apply plugin: 'maven'
-
-// In order to upload to the repo, you need a file ~/.gradle/gradle.properties with
+// Publishing requires the following parameters (you can either pass them in as gradle parameters with -P<paramName>=...
+// or you can add them to a gradle.properties file (for ex. in your global ~/.gradle/gradle.properties file)):
 // repoUser=<your user name>
 // repoPassword=<your password>
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.groupId = groupId
-            pom.artifactId = artifactId
-            pom.version = version
+//
+// Also at least one of the following parameters are required:
+// mavenOpenRepoUrl=<URL>
+// mavenSnapshotsRepoUrl=<URL>
+// mavenLocalRepoUrl=<URL>
 
+// Because the components are created only during the afterEvaluate phase, we must
+// configure our publications using the afterEvaluate() lifecycle method
+afterEvaluate {
+
+    // Create source and javadoc artifacts
+    def sourcesArtifact = artifacts.add('archives', sourcesJar)
+    def javadocArtifact = artifacts.add('archives', javadocJar)
+
+    publishing {
+        publications {
+            // Creates a Maven publication called "release"
+            release(MavenPublication) {
+                // Applies the component for the release build variant
+                from components.release
+
+                // Adds additional artifacts
+                artifact sourcesArtifact
+                artifact javadocArtifact
+
+                // Customizes attributes of the publication
+                groupId = project.groupId
+                artifactId = project.artifactId
+                version = project.version
+            }
+        }
+
+        repositories {
             if (project.hasProperty('mavenOpenRepoUrl')) {
-                repository(url: mavenOpenRepoUrl) {
-                    authentication(
-                            userName: project.hasProperty('repoUser') ? repoUser : 'invalidUserName',
-                            password: project.hasProperty('repoPassword') ? repoPassword : 'invalidPassword'
-                    )
+                maven {
+                    name = "open"
+                    url = mavenOpenRepoUrl
+                    credentials {
+                        username = project.hasProperty('repoUser') ? repoUser : 'invalidUserName'
+                        password = project.hasProperty('repoPassword') ? repoPassword : 'invalidPassword'
+                    }
                 }
             }
-
             if (project.hasProperty('mavenSnapshotsRepoUrl')) {
-                repository(url: mavenSnapshotsRepoUrl) {
-                    authentication(
-                            userName: project.hasProperty('repoUser') ? repoUser : 'invalidUserName',
-                            password: project.hasProperty('repoPassword') ? repoPassword : 'invalidPassword'
-                    )
-                    uniqueVersion = false
+                maven {
+                    name = "snapshots"
+                    url = mavenSnapshotsRepoUrl
+                    credentials {
+                        username = project.hasProperty('repoUser') ? repoUser : 'invalidUserName'
+                        password = project.hasProperty('repoPassword') ? repoPassword : 'invalidPassword'
+                    }
                 }
             }
-
             if (project.hasProperty('mavenLocalRepoUrl')) {
-                repository(url: mavenLocalRepoUrl) {
+                maven {
+                    name = "local"
+                    url = mavenLocalRepoUrl
                 }
             }
         }

@@ -24,7 +24,7 @@ internal fun ResolvePaymentResponse.toResolvedPayment() = ResolvedPayment(
     bic = bic,
     amount = amount,
     purpose = purpose,
-    status = when (status.toLowerCase(Locale.ENGLISH)) {
+    status = when (status.lowercase(Locale.ENGLISH)) {
         "open" -> ResolvedPayment.Status.OPEN
         "paid" -> ResolvedPayment.Status.PAID
         else -> ResolvedPayment.Status.INVALID

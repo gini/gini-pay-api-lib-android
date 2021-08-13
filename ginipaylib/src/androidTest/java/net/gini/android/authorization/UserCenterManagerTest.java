@@ -1,7 +1,7 @@
 package net.gini.android.authorization;
 
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,8 +11,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import android.net.Uri;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +35,7 @@ public class UserCenterManagerTest {
     @Before
     public void setUp() {
         // https://code.google.com/p/dexmaker/issues/detail?id=2
-        System.setProperty("dexmaker.dexcache", getTargetContext().getCacheDir().getPath());
+        System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
 
         mMockUserCenterAPICommunicator = Mockito.mock(UserCenterAPICommunicator.class);
         mUserCenterManager = new UserCenterManager(mMockUserCenterAPICommunicator);
