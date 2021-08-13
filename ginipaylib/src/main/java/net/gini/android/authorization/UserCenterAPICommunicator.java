@@ -3,6 +3,7 @@ package net.gini.android.authorization;
 import android.net.Uri;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import net.gini.android.GiniApiType;
@@ -15,6 +16,8 @@ import net.gini.android.requests.RetryPolicyFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import bolts.Continuation;
@@ -146,10 +149,16 @@ public class UserCenterAPICommunicator {
     // Visible for testing
     Task<JSONObject> getGiniApiSessionTokenInfo(final Session giniApiSession) {
         final RequestTaskCompletionSource<JSONObject> completionSource = RequestTaskCompletionSource.newCompletionSource();
-        final String url = mBaseUrl + "oauth/check_token?token=" + giniApiSession.getAccessToken();
-        final JsonObjectRequest request =
-                new JsonObjectRequest(GET, url, null, completionSource, completionSource);
-        mRequestQueue.add(request);
+        try {
+            final String url = mBaseUrl + "oauth/check_token?token=" +
+                    URLEncoder.encode(giniApiSession.getAccessToken(), "UTF-8");
+            final JsonObjectRequest request =
+                    new JsonObjectRequest(GET, url, null, completionSource, completionSource);
+            mRequestQueue.add(request);
+        } catch (UnsupportedEncodingException e) {
+            completionSource.onErrorResponse(new VolleyError(e));
+        }
+
         return completionSource.getTask();
     }
 

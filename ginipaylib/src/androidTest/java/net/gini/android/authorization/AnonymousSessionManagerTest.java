@@ -1,6 +1,6 @@
 package net.gini.android.authorization;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static net.gini.android.Utils.CHARSET_UTF8;
 
@@ -16,8 +16,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.support.test.filters.MediumTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.MediumTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
@@ -48,7 +48,7 @@ public class AnonymousSessionManagerTest {
     @Before
     public void setUp() {
         // https://code.google.com/p/dexmaker/issues/detail?id=2
-        System.setProperty("dexmaker.dexcache", getTargetContext().getCacheDir().getPath());
+        System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
 
         mUserCenterManager = Mockito.mock(UserCenterManager.class);
         mCredentialsStore = Mockito.mock(CredentialsStore.class);

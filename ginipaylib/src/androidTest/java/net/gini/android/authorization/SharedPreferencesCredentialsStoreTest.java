@@ -2,7 +2,7 @@ package net.gini.android.authorization;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.SharedPreferences.Editor;
-import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -10,8 +10,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.content.SharedPreferences;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class SharedPreferencesCredentialsStoreTest {
 
     @Before
     public void setUp() {
-        mSharedPreferences = getTargetContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
+        mSharedPreferences = getApplicationContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
         // Clear preferences from previous tests
         final Editor preferencesEditor = mSharedPreferences.edit();
         preferencesEditor.clear();
