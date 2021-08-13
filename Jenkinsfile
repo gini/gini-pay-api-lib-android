@@ -152,7 +152,7 @@ pipeline {
                 sh '''
                     ./gradlew ginipaylib:publishReleasePublicationToOpenRepository \
                     -PmavenOpenRepoUrl=https://repo.gini.net/nexus/content/repositories/open \
-                    -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW' \
+                    -PrepoUser=$NEXUS_MAVEN_USR -PrepoPassword=$NEXUS_MAVEN_PSW \
                     -Dorg.gradle.java.home=$JAVA11
                 '''
             }
