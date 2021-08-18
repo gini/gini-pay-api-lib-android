@@ -190,7 +190,7 @@ public class ApiCommunicator {
 
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
             throws JSONException {
-        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions",
+        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
                 checkNotNull(documentId))).toString();
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();

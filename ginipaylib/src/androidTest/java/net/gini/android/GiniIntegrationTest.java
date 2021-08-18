@@ -154,6 +154,35 @@ public class GiniIntegrationTest {
     }
 
     @Test
+    public void sendFeedbackWithoutCompoundExtractions() throws Exception {
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
+        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
+                DocumentTaskManager.DocumentType.INVOICE);
+        final Document document = documentExtractions.keySet().iterator().next();
+        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next();
+
+        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
+        // we should only send feedback for extractions we have seen and accepted
+        final Map<String, SpecificExtraction> feedback = new HashMap<>();
+        feedback.put("iban", extractions.get("iban"));
+        feedback.put("amountToPay", extractions.get("amountToPay"));
+        feedback.put("bic", extractions.get("bic"));
+        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+
+        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        sendFeedback.waitForCompletion();
+        if (sendFeedback.isFaulted()) {
+            Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
+        }
+        assertTrue("Sending feedback should be completed", sendFeedback.isCompleted());
+        assertFalse("Sending feedback should be successful", sendFeedback.isFaulted());
+    }
+
+    @Test
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
