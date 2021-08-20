@@ -190,14 +190,14 @@ public class ApiCommunicator {
 
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
             throws JSONException {
-        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions",
+        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
                 checkNotNull(documentId))).toString();
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
         final JSONObject requestData = new JSONObject();
         requestData.put("feedback", checkNotNull(extractions));
         final BearerJsonObjectRequest request =
-                new BearerJsonObjectRequest(PUT, url, requestData, checkNotNull(session),
+                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
                         mGiniApiType, completionSource, completionSource,
                         mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
         mRequestQueue.add(request);
@@ -216,7 +216,7 @@ public class ApiCommunicator {
         requestData.put("extractions", checkNotNull(extractions));
         requestData.put("compoundExtractions", checkNotNull(compoundExtractions));
         final BearerJsonObjectRequest request =
-                new BearerJsonObjectRequest(PUT, url, requestData, checkNotNull(session),
+                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
                         mGiniApiType, completionSource, completionSource,
                         mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
         mRequestQueue.add(request);
