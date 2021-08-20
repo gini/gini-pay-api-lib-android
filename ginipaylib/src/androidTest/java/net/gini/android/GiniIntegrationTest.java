@@ -1,21 +1,33 @@
 package net.gini.android;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.SdkSuppress;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import android.util.Log;
 
 import com.android.volley.toolbox.NoCache;
 
 import net.gini.android.authorization.EncryptedCredentialsStore;
 import net.gini.android.authorization.UserCredentials;
 import net.gini.android.helpers.TestUtils;
+import net.gini.android.models.Box;
 import net.gini.android.models.CompoundExtraction;
 import net.gini.android.models.Document;
+import net.gini.android.models.Extraction;
 import net.gini.android.models.ExtractionsContainer;
 import net.gini.android.models.Payment;
 import net.gini.android.models.PaymentProvider;
@@ -41,17 +53,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import bolts.Continuation;
 import bolts.Task;
-
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -123,7 +128,7 @@ public class GiniIntegrationTest {
     }
 
     @Test
-    public void sendFeedback() throws Exception {
+    public void sendFeedback_withCompoundExtractions_forDocument_withoutLineItems() throws Exception {
         final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
@@ -142,7 +147,122 @@ public class GiniIntegrationTest {
         feedback.put("bic", extractions.get("bic"));
         feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
 
+        // The document had no compound extractions but we create some and send them back as feedback
+        final Box box = new Box(1, 2, 3, 4, 5);
+        final List<Map<String, SpecificExtraction>> rows = new ArrayList<>();
+
+        final Map<String, SpecificExtraction> firstRowColumns = new HashMap<>();
+        firstRowColumns.put("description", new SpecificExtraction("description", "CORE ICON - Sweatjacke - emerald", "text", box,
+                Collections.<Extraction>emptyList()));
+        firstRowColumns.put("grossPrice",
+                new SpecificExtraction("grossPrice", "39.99:EUR", "amount", box, Collections.<Extraction>emptyList()));
+        rows.add(firstRowColumns);
+
+        final Map<String, SpecificExtraction> secondRowColumns = new HashMap<>();
+        secondRowColumns.put("description",
+                new SpecificExtraction("description", "Strickpullover - yellow", "text", box, Collections.<Extraction>emptyList()));
+        secondRowColumns.put("grossPrice",
+                new SpecificExtraction("grossPrice", "59.99:EUR", "amount", box, Collections.<Extraction>emptyList()));
+        rows.add(secondRowColumns);
+
+        final CompoundExtraction compoundExtraction = new CompoundExtraction("lineItems", rows);
+
         Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
+        feedbackCompound.put("lineItems", compoundExtraction);
+
+        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
+        sendFeedback.waitForCompletion();
+        if (sendFeedback.isFaulted()) {
+            Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
+        }
+        assertTrue("Sending feedback should be completed", sendFeedback.isCompleted());
+        assertFalse("Sending feedback should be successful", sendFeedback.isFaulted());
+    }
+
+    @Test
+    public void sendFeedback_withoutCompoundExtractions_forDocument_withoutLineItems() throws Exception {
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
+        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
+                DocumentTaskManager.DocumentType.INVOICE);
+        final Document document = documentExtractions.keySet().iterator().next();
+        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next();
+
+        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
+        // we should only send feedback for extractions we have seen and accepted
+        final Map<String, SpecificExtraction> feedback = new HashMap<>();
+        feedback.put("iban", extractions.get("iban"));
+        feedback.put("amountToPay", extractions.get("amountToPay"));
+        feedback.put("bic", extractions.get("bic"));
+        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+
+        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        sendFeedback.waitForCompletion();
+        if (sendFeedback.isFaulted()) {
+            Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
+        }
+        assertTrue("Sending feedback should be completed", sendFeedback.isCompleted());
+        assertFalse("Sending feedback should be successful", sendFeedback.isFaulted());
+    }
+
+    @Test
+    public void sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() throws Exception {
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("line-items.pdf");
+        assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
+                DocumentTaskManager.DocumentType.INVOICE, extractionsContainer -> {});
+        final Document document = documentExtractions.keySet().iterator().next();
+        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next().getSpecificExtractions();
+
+        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
+        // we should only send feedback for extractions we have seen and accepted
+        final Map<String, SpecificExtraction> feedback = new HashMap<>();
+        feedback.put("iban", extractions.get("iban"));
+        feedback.put("amountToPay", extractions.get("amountToPay"));
+        feedback.put("bic", extractions.get("bic"));
+        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+
+        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        sendFeedback.waitForCompletion();
+        if (sendFeedback.isFaulted()) {
+            Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
+        }
+        assertTrue("Sending feedback should be completed", sendFeedback.isCompleted());
+        assertFalse("Sending feedback should be successful", sendFeedback.isFaulted());
+    }
+
+    @Test
+    public void sendFeedback_withCompoundExtractions_forDocument_withLineItems() throws Exception {
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("line-items.pdf");
+        assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+        final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
+                DocumentTaskManager.DocumentType.INVOICE, extractionsContainer -> {});
+        final Document document = documentExtractions.keySet().iterator().next();
+        final ExtractionsContainer extractionsContainer = documentExtractions.values().iterator().next();
+        final Map<String, SpecificExtraction> specificExtractions = extractionsContainer.getSpecificExtractions();
+        final Map<String, CompoundExtraction> compoundExtractions = extractionsContainer.getCompoundExtractions();
+
+        // All specific extractions are correct, that means we have nothing to correct and will only send positive feedback
+        // we should only send feedback for extractions we have seen and accepted
+        final Map<String, SpecificExtraction> feedback = new HashMap<>();
+        feedback.put("iban", specificExtractions.get("iban"));
+        feedback.put("amountToPay", specificExtractions.get("amountToPay"));
+        feedback.put("bic", specificExtractions.get("bic"));
+        feedback.put("paymentRecipient", specificExtractions.get("paymentRecipient"));
+
+        // All compound extractions are correct, that means we have nothing to correct and will only send positive feedback
+        // we should only send feedback for extractions we have seen and accepted
+        Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
+        feedbackCompound.put("lineItems", compoundExtractions.get("lineItems"));
 
         final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
         sendFeedback.waitForCompletion();
@@ -672,25 +792,33 @@ public class GiniIntegrationTest {
     }
 
     private Map<Document, Map<String, SpecificExtraction>> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType)
-            throws InterruptedException, JSONException {
+            throws InterruptedException {
+        final Map<Document, ExtractionsContainer> result = processDocument(documentBytes, contentType, filename, documentType, extractionsContainer -> {
+            final Map<String, SpecificExtraction> extractions = extractionsContainer.getSpecificExtractions();
+            assertEquals("IBAN should be found", "DE78370501980020008850", extractions.get("iban").getValue());
+            assertEquals("Amount to pay should be found", "1.00:EUR", extractions.get("amountToPay").getValue());
+            assertEquals("BIC should be found", "COLSDE33", extractions.get("bic").getValue());
+            assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("paymentRecipient").getValue());
+        });
+        final Document document = result.keySet().iterator().next();
+        final Map<String, SpecificExtraction> specificExtractions = result.values().iterator().next().getSpecificExtractions();
+        return Collections.singletonMap(document, specificExtractions);
+    }
+
+    private Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType,
+                                                                ExtractionsCallback extractionsCallback)
+            throws InterruptedException {
         final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
 
         final Task<Document> upload = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
-        final Task<Document> processDocument = upload.onSuccessTask(new Continuation<Document, Task<Document>>() {
-            @Override
-            public Task<Document> then(Task<Document> task) throws Exception {
-                Document document = task.getResult();
-                return documentTaskManager.pollDocument(document);
-            }
+        final Task<Document> processDocument = upload.onSuccessTask(task -> {
+            Document document = task.getResult();
+            return documentTaskManager.pollDocument(document);
         });
 
         final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
-                new Continuation<Document, Task<ExtractionsContainer>>() {
-                    @Override
-                    public Task<ExtractionsContainer> then(Task<Document> task) throws Exception {
-                        return documentTaskManager.getAllExtractions(task.getResult());
-                    }
-                });
+                task -> documentTaskManager.getAllExtractions(task.getResult())
+        );
 
         retrieveExtractions.waitForCompletion();
         if (retrieveExtractions.isFaulted()) {
@@ -699,13 +827,12 @@ public class GiniIntegrationTest {
 
         assertFalse("extractions should have succeeded", retrieveExtractions.isFaulted());
 
-        final Map<String, SpecificExtraction> extractions = retrieveExtractions.getResult().getSpecificExtractions();
+        extractionsCallback.onExtractionsAvailable(retrieveExtractions.getResult());
 
-        assertEquals("IBAN should be found", "DE78370501980020008850", extractions.get("iban").getValue());
-        assertEquals("Amount to pay should be found", "1.00:EUR", extractions.get("amountToPay").getValue());
-        assertEquals("BIC should be found", "COLSDE33", extractions.get("bic").getValue());
-        assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("paymentRecipient").getValue());
+        return Collections.singletonMap(upload.getResult(), retrieveExtractions.getResult());
+    }
 
-        return Collections.singletonMap(upload.getResult(), extractions);
+    private interface ExtractionsCallback {
+        void onExtractionsAvailable(@NonNull final ExtractionsContainer extractionsContainer);
     }
 }

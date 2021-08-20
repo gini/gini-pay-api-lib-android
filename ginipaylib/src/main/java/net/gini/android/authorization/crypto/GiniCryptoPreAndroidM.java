@@ -68,7 +68,7 @@ class GiniCryptoPreAndroidM extends GiniCrypto {
         } catch (InvalidKeyException | UnrecoverableEntryException | NoSuchAlgorithmException
                 | KeyStoreException | NoSuchProviderException | InvalidAlgorithmParameterException
                 | CertificateException | IllegalBlockSizeException | BadPaddingException
-                | IOException | NoSuchPaddingException e) {
+                | IOException | NoSuchPaddingException | IllegalArgumentException e) {
             throw new GiniCryptoException(e);
         }
     }
