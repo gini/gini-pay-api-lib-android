@@ -4,6 +4,9 @@ Gini Pay API lib
 A library for integrating Gini technology into other apps. With this library you will be able to extract semantic information
 from various types of documents.
 
+## Documentation
+
+Further documentation with information about how install and integrate it can be found in our [website](https://developer.gini.net/gini-pay-api-lib-android/).
 
 Dependencies
 ------------
