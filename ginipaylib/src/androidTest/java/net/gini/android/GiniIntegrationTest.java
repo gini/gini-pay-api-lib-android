@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -36,6 +37,7 @@ import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.ErrorEvent;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -753,6 +755,19 @@ public class GiniIntegrationTest {
         assertNotNull(task.getResult());
         byte[] bytes = task.getResult();
         assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+    }
+
+    @Test
+    public void logErrorEvent() throws Exception {
+        final ErrorEvent errorEvent = new ErrorEvent(
+                Build.MODEL, "Android", Build.VERSION.RELEASE,
+                "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
+        );
+
+        final Task<Void> requestTask = gini.getDocumentTaskManager().logErrorEvent(errorEvent);
+        requestTask.waitForCompletion();
+
+        assertNull(requestTask.getError());
     }
 
     private Task<String> createPaymentRequest() throws Exception {

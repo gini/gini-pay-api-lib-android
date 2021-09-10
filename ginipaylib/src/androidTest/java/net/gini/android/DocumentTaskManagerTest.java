@@ -7,6 +7,8 @@ import android.net.Uri;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.android.volley.Request;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import net.gini.android.DocumentTaskManager.DocumentType;
@@ -25,6 +27,7 @@ import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.ErrorEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -962,5 +965,31 @@ public class DocumentTaskManagerTest {
         }
         Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "335.50:EUR", "ReNr AZ356789Z", "CMCIDEDDXXX");
         assertEquals(payment, paymentRequestTask.getResult());
+    }
+
+    @Test
+    public void logErrorEvent() throws Exception {
+        when(mApiCommunicator.logErrorEvent(any(JSONObject.class), any(Session.class)))
+                .thenReturn(Task.forResult(new JSONObject()));
+
+        final ErrorEvent errorEvent = new ErrorEvent(
+                "sm-g950f", "Android", "12",
+                "1.2.0", "1.0.0", "Bad things happen"
+        );
+
+        final Task<Void> requestTask = mDocumentTaskManager.logErrorEvent(errorEvent);
+        requestTask.waitForCompletion();
+        if (requestTask.isFaulted()) {
+            throw requestTask.getError();
+        }
+
+        final ArgumentCaptor<JSONObject> requestBodyCaptor = ArgumentCaptor.forClass(JSONObject.class);
+        verify(mApiCommunicator).logErrorEvent(requestBodyCaptor.capture(), any(Session.class));
+        final JSONObject requestBody = requestBodyCaptor.getValue();
+
+        final JsonAdapter<ErrorEvent> adapter = moshi.adapter(ErrorEvent.class);
+        final ErrorEvent sentErrorEvent = adapter.fromJson(requestBody.toString());
+
+        assertEquals(errorEvent, sentErrorEvent);
     }
 }
