@@ -825,8 +825,12 @@ public class GiniIntegrationTest {
             throws InterruptedException {
         final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
 
-        final Task<Document> upload = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
-        final Task<Document> processDocument = upload.onSuccessTask(task -> {
+        final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
+        final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {
+           Document document = task.getResult();
+           return documentTaskManager.createCompositeDocument(Collections.singletonList(document), null);
+        });
+        final Task<Document> processDocument = createComposite.onSuccessTask(task -> {
             Document document = task.getResult();
             return documentTaskManager.pollDocument(document);
         });
@@ -844,7 +848,7 @@ public class GiniIntegrationTest {
 
         extractionsCallback.onExtractionsAvailable(retrieveExtractions.getResult());
 
-        return Collections.singletonMap(upload.getResult(), retrieveExtractions.getResult());
+        return Collections.singletonMap(createComposite.getResult(), retrieveExtractions.getResult());
     }
 
     private interface ExtractionsCallback {
