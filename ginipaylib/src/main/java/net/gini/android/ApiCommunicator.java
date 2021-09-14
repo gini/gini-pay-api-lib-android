@@ -24,6 +24,7 @@ import net.gini.android.authorization.requests.BearerHeadersRequest;
 import net.gini.android.authorization.requests.BearerJsonArrayRequest;
 import net.gini.android.authorization.requests.BearerJsonObjectRequest;
 import net.gini.android.requests.BearerUploadRequest;
+import net.gini.android.requests.ErrorEvent;
 import net.gini.android.requests.RetryPolicyFactory;
 
 import org.json.JSONArray;
@@ -319,6 +320,11 @@ public class ApiCommunicator {
         String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
                 .toString();
         return doRequestWithByteArrayResponse(url, GET, session);
+    }
+
+    public Task<JSONObject> logErrorEvent(@NonNull final JSONObject errorEvent, @NonNull final Session session) {
+        final String url = mBaseUri.buildUpon().appendPath("events").appendPath("error").toString();
+        return doRequestWithBodyAndJsonResponse(url, POST, errorEvent, session);
     }
 
     /**

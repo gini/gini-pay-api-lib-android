@@ -6,7 +6,7 @@ This document describes the release process for a new version of the Gini Pay AP
 * Merge `feature` branches into `develop` using a PR
 * Create a `release-x.y.z` branch where `x.y.z` is the new version number 
   * Update `version` in `ginipaylib/gradle.properties`
-  * Update the version in the snippets in `Readme.md` and `ginipaylib/src/doc/source/guides/getting-started.rst`
+  * Update the version in the snippet `ginipaylib/src/doc/source/guides/getting-started.rst`
 * Push the `release-x.y.z` branch and wait for the build to pass
 * Merge the `release-x.y.z` branch into `master` using a PR
 * Tag `master` branch with the new version number

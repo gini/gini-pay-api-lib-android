@@ -1,49 +1,30 @@
-Gini Pay API lib
-================
+Gini Pay API Library
+====================
 
-A library for integrating Gini technology into other apps. With this library you will be able to extract semantic information
-from various types of documents.
+A library for communicating with the [Gini Pay API](https://pay-api.gini.net/documentation/). It allows you to easily add
+[payment information extraction](https://pay-api.gini.net/documentation/#document-extractions-for-payment) capabilities
+to your app. It also enables your app to create or resolve [payment requests](https://pay-api.gini.net/documentation/#payments).
 
-## Documentation
+The Gini Pay API provides an information extraction service for analyzing invoices. Specifically it extracts information
+such as the document sender or the payment relevant information (amount to pay, IBAN, BIC, payment reference, etc.).
+It also provides secure payment information sharing between clients via payment requests.
 
-Further documentation with information about how install and integrate it can be found in our [website](https://developer.gini.net/gini-pay-api-lib-android/).
+Documentation
+-------------
+
+See the [integration guide](https://developer.gini.net/gini-pay-api-lib-android/) for detailed guidance on how to
+integrate the Gini Pay API Library into your app.
 
 Dependencies
 ------------
 
-The Gini Pay API lib has the following dependencies:
+The Gini Pay API Library has the following dependencies:
 
 * [Volley from Google](http://developer.android.com/training/volley/index.html) ([AOSP Repository](https://android.googlesource.com/platform/frameworks/volley))
 * [Bolts from facebook](https://github.com/BoltsFramework/Bolts-Android)
 * [TrustKit from DataTheorem](https://github.com/datatheorem/TrustKit-Android)
 
-Integration
------------
+License
+-------
 
-You can easily integrate the Gini Pay API lib into your app using Gradle and our Maven repository.
-
-```
-    repositories {
-        maven {
-            url "https://repo.gini.net/nexus/content/repositories/public"
-        }
-        ...
-    }
-    
-    dependencies {
-        implementation('net.gini:gini-pay-api-lib-android:1.0.1@aar'){
-            transitive = true
-        }
-        ...
-    }
-
-```
-
-See the [integration guide](http://developer.gini.net/gini-pay-api-lib-android/) for detailed guidance how to 
-integrate the Gini Pay API lib into your app.
-
-See the [Gini Pay API lib documentation](http://developer.gini.net/gini-pay-api-lib-android/java-docs-release/net/gini/android/DocumentTaskManager.html)
-for more details how to use the `DocumentTaskManager`.
-
-
-Copyright (c) 2014-2019, [Gini GmbH](https://www.gini.net/)
+The Gini Pay API Library is available under the MIT license. See the LICENSE file for details.
