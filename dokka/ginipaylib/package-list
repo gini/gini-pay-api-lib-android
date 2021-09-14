@@ -248,6 +248,16 @@ $dokka.location:net.gini.android.requests/DefaultRetryPolicyFactory///PointingTo
 $dokka.location:net.gini.android.requests/DefaultRetryPolicyFactory/DefaultRetryPolicyFactory/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-default-retry-policy-factory/-default-retry-policy-factory.html
 $dokka.location:net.gini.android.requests/DefaultRetryPolicyFactory/DefaultRetryPolicyFactory/#int#int#float/PointingToDeclaration/ginipaylib/net.gini.android.requests/-default-retry-policy-factory/-default-retry-policy-factory.html
 $dokka.location:net.gini.android.requests/DefaultRetryPolicyFactory/newRetryPolicy/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-default-retry-policy-factory/new-retry-policy.html
+$dokka.location:net.gini.android.requests/ErrorEvent///PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/index.html
+$dokka.location:net.gini.android.requests/ErrorEvent/ErrorEvent/#kotlin.String#kotlin.String#kotlin.String#kotlin.String#kotlin.String#kotlin.String#kotlin.String?#kotlin.String?/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/-error-event.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getApiLibVersion/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-api-lib-version.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getCaptureSdkVersion/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-capture-sdk-version.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getDescription/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-description.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getDeviceModel/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-device-model.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getDocumentId/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-document-id.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getOriginalRequestId/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-original-request-id.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getOsName/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-os-name.html
+$dokka.location:net.gini.android.requests/ErrorEvent/getOsVersion/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-error-event/get-os-version.html
 $dokka.location:net.gini.android.requests/RetryPolicyFactory///PointingToDeclaration/ginipaylib/net.gini.android.requests/-retry-policy-factory/index.html
 $dokka.location:net.gini.android.requests/RetryPolicyFactory/newRetryPolicy/#/PointingToDeclaration/ginipaylib/net.gini.android.requests/-retry-policy-factory/new-retry-policy.html
 $dokka.location:net.gini.android.response////PointingToDeclaration/ginipaylib/net.gini.android.response/index.html
@@ -285,6 +295,7 @@ $dokka.location:net.gini.android/ApiCommunicator/getPaymentProviders/#net.gini.a
 $dokka.location:net.gini.android/ApiCommunicator/getPaymentRequest/#java.lang.String#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/get-payment-request.html
 $dokka.location:net.gini.android/ApiCommunicator/getPaymentRequests/#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/get-payment-requests.html
 $dokka.location:net.gini.android/ApiCommunicator/getPreview/#java.lang.String#int#net.gini.android.ApiCommunicator.PreviewSize#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/get-preview.html
+$dokka.location:net.gini.android/ApiCommunicator/logErrorEvent/#org.json.JSONObject#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/log-error-event.html
 $dokka.location:net.gini.android/ApiCommunicator/postPaymentRequests/#org.json.JSONObject#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/post-payment-requests.html
 $dokka.location:net.gini.android/ApiCommunicator/resolvePaymentRequests/#java.lang.String#org.json.JSONObject#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/resolve-payment-requests.html
 $dokka.location:net.gini.android/ApiCommunicator/searchDocuments/#java.lang.String#java.lang.String#int#int#net.gini.android.authorization.Session/PointingToDeclaration/ginipaylib/net.gini.android/-api-communicator/search-documents.html
@@ -351,6 +362,7 @@ $dokka.location:net.gini.android/DocumentTaskManager/getPaymentProvider/#java.la
 $dokka.location:net.gini.android/DocumentTaskManager/getPaymentProviders/#/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/get-payment-providers.html
 $dokka.location:net.gini.android/DocumentTaskManager/getPaymentRequest/#java.lang.String/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/get-payment-request.html
 $dokka.location:net.gini.android/DocumentTaskManager/getPaymentRequests/#/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/get-payment-requests.html
+$dokka.location:net.gini.android/DocumentTaskManager/logErrorEvent/#net.gini.android.requests.ErrorEvent/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/log-error-event.html
 $dokka.location:net.gini.android/DocumentTaskManager/pollDocument/#net.gini.android.models.Document/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/poll-document.html
 $dokka.location:net.gini.android/DocumentTaskManager/reportDocument/#net.gini.android.models.Document#java.lang.String#java.lang.String/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/report-document.html
 $dokka.location:net.gini.android/DocumentTaskManager/resolvePaymentRequest/#java.lang.String#net.gini.android.models.ResolvePaymentInput/PointingToDeclaration/ginipaylib/net.gini.android/-document-task-manager/resolve-payment-request.html
