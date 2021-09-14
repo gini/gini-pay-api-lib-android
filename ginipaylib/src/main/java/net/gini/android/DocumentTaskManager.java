@@ -1,5 +1,8 @@
 package net.gini.android;
 
+import static net.gini.android.Utils.CHARSET_UTF8;
+import static net.gini.android.Utils.checkNotNull;
+
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -28,6 +31,7 @@ import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.ResolvedPaymentKt;
 import net.gini.android.models.ReturnReason;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.ErrorEvent;
 import net.gini.android.requests.PaymentRequestBody;
 import net.gini.android.requests.PaymentRequestBodyKt;
 import net.gini.android.requests.ResolvePaymentBody;
@@ -55,9 +59,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import bolts.Continuation;
 import bolts.Task;
-
-import static net.gini.android.Utils.CHARSET_UTF8;
-import static net.gini.android.Utils.checkNotNull;
 
 /**
  * The DocumentTaskManager is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
@@ -975,6 +976,17 @@ public class DocumentTaskManager {
                 return mApiCommunicator.getPageImage(documentId, page, session);
             }
         }, Task.BACKGROUND_EXECUTOR);
+    }
+
+    public Task<Void> logErrorEvent(final ErrorEvent errorEvent) {
+        return mSessionManager.getSession()
+                .onSuccessTask(task -> {
+                    final Session session = task.getResult();
+                    JsonAdapter<ErrorEvent> adapter = mMoshi.adapter(ErrorEvent.class);
+                    String body = adapter.toJson(errorEvent);
+                    return mApiCommunicator.logErrorEvent(new JSONObject(body), session);
+                }, Task.BACKGROUND_EXECUTOR)
+                .onSuccessTask(task -> null, Task.BACKGROUND_EXECUTOR);
     }
 
     /**

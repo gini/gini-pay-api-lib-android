@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -36,6 +37,7 @@ import net.gini.android.models.PaymentRequestInput;
 import net.gini.android.models.ResolvePaymentInput;
 import net.gini.android.models.ResolvedPayment;
 import net.gini.android.models.SpecificExtraction;
+import net.gini.android.requests.ErrorEvent;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -755,6 +757,19 @@ public class GiniIntegrationTest {
         assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
     }
 
+    @Test
+    public void logErrorEvent() throws Exception {
+        final ErrorEvent errorEvent = new ErrorEvent(
+                Build.MODEL, "Android", Build.VERSION.RELEASE,
+                "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
+        );
+
+        final Task<Void> requestTask = gini.getDocumentTaskManager().logErrorEvent(errorEvent);
+        requestTask.waitForCompletion();
+
+        assertNull(requestTask.getError());
+    }
+
     private Task<String> createPaymentRequest() throws Exception {
         final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
@@ -810,8 +825,12 @@ public class GiniIntegrationTest {
             throws InterruptedException {
         final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
 
-        final Task<Document> upload = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
-        final Task<Document> processDocument = upload.onSuccessTask(task -> {
+        final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
+        final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {
+           Document document = task.getResult();
+           return documentTaskManager.createCompositeDocument(Collections.singletonList(document), null);
+        });
+        final Task<Document> processDocument = createComposite.onSuccessTask(task -> {
             Document document = task.getResult();
             return documentTaskManager.pollDocument(document);
         });
@@ -829,7 +848,7 @@ public class GiniIntegrationTest {
 
         extractionsCallback.onExtractionsAvailable(retrieveExtractions.getResult());
 
-        return Collections.singletonMap(upload.getResult(), retrieveExtractions.getResult());
+        return Collections.singletonMap(createComposite.getResult(), retrieveExtractions.getResult());
     }
 
     private interface ExtractionsCallback {
