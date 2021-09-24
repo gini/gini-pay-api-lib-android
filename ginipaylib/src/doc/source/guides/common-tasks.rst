@@ -49,11 +49,6 @@ The following example shows how to create a new document from a byte array conta
 Each page of a document needs to uploaded as a partial document. In addition documents consisting of
 one page also should be uploaded as a partial document.
 
-.. warning::
-
-    If you are using the Gini Accounting API, then partial documents are not supported. Use the
-    `DocumentTaskManager#createDocument()` methods instead.
-
 .. note::
 
     PDFs and UTF-8 encoded text should also be uploaded as partial documents. Even though PDFs might
@@ -86,12 +81,6 @@ extractions for the document. *Composite documents* consist of
 previously created *partial documents*. You can consider creating partial documents analogous to
 uploading pages of a document and creating a composite document analogous to processing those pages
 as a single document.
-
-.. warning::
-
-    If you are using the Gini Accounting API, then composite documents are not supported. You need to
-    use `DocumentTaskManager#pollDocument()` and then `DocumentTaskManager#getExtractions()` without
-    creating a composite document.
 
 Before retrieving extractions you need to create a composite document from your partial documents.
 The ``createCompositeDocument()`` method accepts either a ``List`` of partial ``Documents`` or a
