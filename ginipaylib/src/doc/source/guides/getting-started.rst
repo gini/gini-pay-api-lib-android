@@ -8,7 +8,7 @@ Getting started
 First of all: Add the Library to your Build
 ===========================================
 
-The gini pay api lib is provided as a aar archive. You can integrate it in your gradle based project by
+The Gini Pay API Library is provided as a aar archive. You can integrate it in your gradle based project by
 adding it as dependency. In order to gain access to the aar file, you have to add the Gini Maven
 repository to your build script.
 
@@ -28,11 +28,11 @@ repository to your build script.
         ...
     }
 
-Integrating the Gini Pay API lib
-========================
+Integrating the Gini Pay API Library
+====================================
 
 
-The Gini Pay API lib provides the ``Gini`` class which is a façade to all functionality of the library. We
+The Gini Pay API Library provides the ``Gini`` class which is a façade to all functionality of the library. We
 recommend using an instance of this class singleton-like. By saying singleton-like we mean that you
 somehow manage to create and keep one instance at application start. Instead of creating a new
 instance every time when you need to interact with the Gini API, you reuse this instance. This has
@@ -87,7 +87,7 @@ Since version 1.5.0 public key pinning is provided using the `Android Network Se
 To use public key pinning you need to create an `Android network security configuration
 <https://developer.android.com/training/articles/security-config.html>`_ xml file. This
 configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
-API Level 17 and 23 Gini Pay API lib relies on `TrustKit
+API Level 17 and 23 Gini Pay API Library relies on `TrustKit
 <https://github.com/datatheorem/TrustKit-Android>`_. On API Levels 15 and 16 our own pinning
 implementation is used.
 
@@ -99,7 +99,7 @@ Configure Pinning
 -----------------
 
 The following sample configuration shows how to set the public key pin for the two domains Gini
-Pay API lib uses by default (``pay-api.gini.net`` and ``user.gini.net``). It should be saved under
+Pay API Library uses by default (``pay-api.gini.net`` and ``user.gini.net``). It should be saved under
 ``res/xml/network_security_config.xml``:
 
 .. code-block:: xml

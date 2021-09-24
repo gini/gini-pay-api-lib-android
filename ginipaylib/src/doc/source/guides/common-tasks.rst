@@ -4,8 +4,8 @@
 Working with Tasks
 ==================
 
-The Gini Pay API lib makes heavy use of the concept of tasks. Tasks are convenient when you want to
-do execute work in succession, each one waiting for the previous to finish (comparable to
+The Gini Pay API Library makes heavy use of the concept of tasks. Tasks are convenient when you want to
+execute work in succession, each one waiting for the previous to finish (comparable to
 Promises in JavaScript). This is a common pattern when working with Gini's remote API. The Gini
 Android SDK uses `facebook's task implementation, which is called bolts
 <https://github.com/BoltsFramework/Bolts-Android>`_. Before you continue reading this guide, we
@@ -19,7 +19,7 @@ As the key aspect of the Gini API is to provide information extraction for analy
 API is mainly built around the concept of documents. A document can be any written representation of
 information such as invoices, reminders, contracts and so on.
 
-The Gini Pay API lib supports creating documents from images, PDFs or UTF-8 encoded text. Images are
+The Gini Pay API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
 usually a picture of a paper document which was taken with the device's camera.
 
 The following example shows how to create a new document from a byte array containing a JPEG image.
@@ -200,7 +200,7 @@ to Gini.
 Handling errors
 ===================
 
-Currently, the Gini Pay API lib doesn't have intelligent error-handling mechanisms. All errors that
+Currently, the Gini Pay API Library doesn't have intelligent error-handling mechanisms. All errors that
 occur during executing a task are handed over transparently. You can react on those errors in the
 ``onError(...)`` method of the task. We may add better error-handling mechanisms in the future. At
 the moment we recommend checking the network status when a task failed and retrying the task.
