@@ -43,9 +43,8 @@ Creating the Gini instance
 ------------------------------
 
 In order to create an instance of the ``Gini`` class, you need both your client id and your client
-secret. If you don't have a client id and client secret yet, you need to register your application
-with Gini. `See the Gini API documentation to find out how to register your Application with Gini
-<http://developer.gini.net/gini-api/html/guides/oauth2.html#first-of-all-register-your-application-with-gini>`_.
+secret. If you don't have a client id and client secret yet, you need to contact us and we'll provide 
+you with credential.
 
 All requests to the Gini API are made on behalf of a user. This means particularly that all created
 documents are bound to a specific user account. But since you are most likely only interested in the
