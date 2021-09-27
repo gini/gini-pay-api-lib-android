@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Working with Tasks &mdash; Gini Pay API lib for Android v1 documentation</title>
+  <title>Working with Tasks &mdash; Gini Pay API Library for Android v1 documentation</title>
   
 
   
@@ -54,7 +54,7 @@
 
   
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Gini Pay API lib for Android v1 documentation" href="../index.html"/>
+    <link rel="top" title="Gini Pay API Library for Android v1 documentation" href="../index.html"/>
         <link rel="next" title="See also" href="../see_also.html"/>
         <link rel="prev" title="Getting started" href="getting-started.html"/> 
 
@@ -85,7 +85,7 @@
             <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#first-of-all-add-the-library-to-your-build">First of all: Add the Library to your Build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#integrating-the-gini-pay-api-lib">Integrating the Gini Pay API lib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#integrating-the-gini-pay-api-library">Integrating the Gini Pay API Library</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="getting-started.html#creating-the-gini-instance">Creating the Gini instance</a></li>
 </ul>
 </li>
@@ -132,7 +132,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Gini Pay API lib for Android</a>
+        <a href="../index.html">Gini Pay API Library for Android</a>
       </nav>
 
 
@@ -154,8 +154,8 @@
             
   <div class="section" id="working-with-tasks">
 <h1>Working with Tasks<a class="headerlink" href="#working-with-tasks" title="Permalink to this headline">¶</a></h1>
-<p>The Gini Pay API lib makes heavy use of the concept of tasks. Tasks are convenient when you want to
-do execute work in succession, each one waiting for the previous to finish (comparable to
+<p>The Gini Pay API Library makes heavy use of the concept of tasks. Tasks are convenient when you want to
+execute work in succession, each one waiting for the previous to finish (comparable to
 Promises in JavaScript). This is a common pattern when working with Gini’s remote API. The Gini
 Android SDK uses <a class="reference external" href="https://github.com/BoltsFramework/Bolts-Android">facebook’s task implementation, which is called bolts</a>. Before you continue reading this guide, we
 strongly encourage you to read the <a class="reference external" href="https://github.com/BoltsFramework/Bolts-Android/blob/master/Readme.md#tasks">short guide for the Bolts framework</a>.</p>
@@ -164,7 +164,7 @@ strongly encourage you to read the <a class="reference external" href="https://g
 <p>As the key aspect of the Gini API is to provide information extraction for analyzing documents, the
 API is mainly built around the concept of documents. A document can be any written representation of
 information such as invoices, reminders, contracts and so on.</p>
-<p>The Gini Pay API lib supports creating documents from images, PDFs or UTF-8 encoded text. Images are
+<p>The Gini Pay API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
 usually a picture of a paper document which was taken with the device’s camera.</p>
 <p>The following example shows how to create a new document from a byte array containing a JPEG image.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.gini.android.Gini</span><span class="p">;</span>
@@ -190,11 +190,6 @@ usually a picture of a paper document which was taken with the device’s camera
 </div>
 <p>Each page of a document needs to uploaded as a partial document. In addition documents consisting of
 one page also should be uploaded as a partial document.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">If you are using the Gini Accounting API, then partial documents are not supported. Use the
-<cite>DocumentTaskManager#createDocument()</cite> methods instead.</p>
-</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">PDFs and UTF-8 encoded text should also be uploaded as partial documents. Even though PDFs might
@@ -211,7 +206,7 @@ setting a filename is a good practice for human readable document identification
 <div class="section" id="setting-the-document-type-hint">
 <h3>Setting the document type hint<a class="headerlink" href="#setting-the-document-type-hint" title="Permalink to this headline">¶</a></h3>
 <p>To easily set the document type hint we introduced the <code class="docutils literal notranslate"><span class="pre">DocumentType</span></code> enum. It is safer and easier
-to use than a <code class="docutils literal notranslate"><span class="pre">String</span></code>. For more details about the document type hints see the <a class="reference external" href="http://developer.gini.net/gini-api/html/documents.html#document-type-hints">Document Type
+to use than a <code class="docutils literal notranslate"><span class="pre">String</span></code>. For more details about the document type hints see the <a class="reference external" href="https://pay-api.gini.net/documentation/#document-types">Document Type
 Hints in the Gini API documentation</a>.</p>
 </div>
 </div>
@@ -222,12 +217,6 @@ extractions for the document. <em>Composite documents</em> consist of
 previously created <em>partial documents</em>. You can consider creating partial documents analogous to
 uploading pages of a document and creating a composite document analogous to processing those pages
 as a single document.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">If you are using the Gini Accounting API, then composite documents are not supported. You need to
-use <cite>DocumentTaskManager#pollDocument()</cite> and then <cite>DocumentTaskManager#getExtractions()</cite> without
-creating a composite document.</p>
-</div>
 <p>Before retrieving extractions you need to create a composite document from your partial documents.
 The <code class="docutils literal notranslate"><span class="pre">createCompositeDocument()</span></code> method accepts either a <code class="docutils literal notranslate"><span class="pre">List</span></code> of partial <code class="docutils literal notranslate"><span class="pre">Documents</span></code> or a
 <code class="docutils literal notranslate"><span class="pre">LinkedHashMap</span></code>. The <code class="docutils literal notranslate"><span class="pre">LinkedHashMap</span></code> contains partial <code class="docutils literal notranslate"><span class="pre">Documents</span></code> as keys and the user applied
@@ -327,7 +316,7 @@ to Gini.</p>
 </div>
 <div class="section" id="handling-errors">
 <h2>Handling errors<a class="headerlink" href="#handling-errors" title="Permalink to this headline">¶</a></h2>
-<p>Currently, the Gini Pay API lib doesn’t have intelligent error-handling mechanisms. All errors that
+<p>Currently, the Gini Pay API Library doesn’t have intelligent error-handling mechanisms. All errors that
 occur during executing a task are handed over transparently. You can react on those errors in the
 <code class="docutils literal notranslate"><span class="pre">onError(...)</span></code> method of the task. We may add better error-handling mechanisms in the future. At
 the moment we recommend checking the network status when a task failed and retrying the task.</p>

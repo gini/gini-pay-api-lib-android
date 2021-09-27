@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; Gini Pay API lib for Android v1 documentation</title>
+  <title>Getting started &mdash; Gini Pay API Library for Android v1 documentation</title>
   
 
   
@@ -54,9 +54,9 @@
 
   
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Gini Pay API lib for Android v1 documentation" href="../index.html"/>
+    <link rel="top" title="Gini Pay API Library for Android v1 documentation" href="../index.html"/>
         <link rel="next" title="Working with Tasks" href="common-tasks.html"/>
-        <link rel="prev" title="Gini Pay API lib Documentation" href="../index.html"/> 
+        <link rel="prev" title="Gini Pay API Library Documentation" href="../index.html"/> 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
@@ -85,7 +85,7 @@
             <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#first-of-all-add-the-library-to-your-build">First of all: Add the Library to your Build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#integrating-the-gini-pay-api-lib">Integrating the Gini Pay API lib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-the-gini-pay-api-library">Integrating the Gini Pay API Library</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating-the-gini-instance">Creating the Gini instance</a></li>
 </ul>
 </li>
@@ -132,7 +132,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Gini Pay API lib for Android</a>
+        <a href="../index.html">Gini Pay API Library for Android</a>
       </nav>
 
 
@@ -156,7 +156,7 @@
 <span id="guide-getting-started"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="first-of-all-add-the-library-to-your-build">
 <h2>First of all: Add the Library to your Build<a class="headerlink" href="#first-of-all-add-the-library-to-your-build" title="Permalink to this headline">¶</a></h2>
-<p>The gini pay api lib is provided as a aar archive. You can integrate it in your gradle based project by
+<p>The Gini Pay API Library is provided as a aar archive. You can integrate it in your gradle based project by
 adding it as dependency. In order to gain access to the aar file, you have to add the Gini Maven
 repository to your build script.</p>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">repositories</span> <span class="o">{</span>
@@ -175,9 +175,9 @@ repository to your build script.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="integrating-the-gini-pay-api-lib">
-<h2>Integrating the Gini Pay API lib<a class="headerlink" href="#integrating-the-gini-pay-api-lib" title="Permalink to this headline">¶</a></h2>
-<p>The Gini Pay API lib provides the <code class="docutils literal notranslate"><span class="pre">Gini</span></code> class which is a façade to all functionality of the library. We
+<div class="section" id="integrating-the-gini-pay-api-library">
+<h2>Integrating the Gini Pay API Library<a class="headerlink" href="#integrating-the-gini-pay-api-library" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Pay API Library provides the <code class="docutils literal notranslate"><span class="pre">Gini</span></code> class which is a façade to all functionality of the library. We
 recommend using an instance of this class singleton-like. By saying singleton-like we mean that you
 somehow manage to create and keep one instance at application start. Instead of creating a new
 instance every time when you need to interact with the Gini API, you reuse this instance. This has
@@ -186,8 +186,8 @@ noteworthy number of HTTP requests.</p>
 <div class="section" id="creating-the-gini-instance">
 <h3>Creating the Gini instance<a class="headerlink" href="#creating-the-gini-instance" title="Permalink to this headline">¶</a></h3>
 <p>In order to create an instance of the <code class="docutils literal notranslate"><span class="pre">Gini</span></code> class, you need both your client id and your client
-secret. If you don’t have a client id and client secret yet, you need to register your application
-with Gini. <a class="reference external" href="http://developer.gini.net/gini-api/html/guides/oauth2.html#first-of-all-register-your-application-with-gini">See the Gini API documentation to find out how to register your Application with Gini</a>.</p>
+secret. If you don’t have a client id and client secret yet, you need to contact us and we’ll provide
+you with credential.</p>
 <p>All requests to the Gini API are made on behalf of a user. This means particularly that all created
 documents are bound to a specific user account. But since you are most likely only interested in the
 results of the semantic document analysis and not in a cloud document storage system, the Gini API
@@ -220,14 +220,14 @@ with this configuration would be <code class="docutils literal notranslate"><spa
 <cite>SdkBuilder</cite> was removed.</p>
 <p>To use public key pinning you need to create an <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android network security configuration</a> xml file. This
 configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
-API Level 17 and 23 Gini Pay API lib relies on <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>. On API Levels 15 and 16 our own pinning
+API Level 17 and 23 Gini Pay API Library relies on <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>. On API Levels 15 and 16 our own pinning
 implementation is used.</p>
 <p>We recommend reading the <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android Network Security Configuration</a> guide and the <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android#limitations">TrustKit
 limitations for API Levels 17 to 23</a>.</p>
 <div class="section" id="configure-pinning">
 <h3>Configure Pinning<a class="headerlink" href="#configure-pinning" title="Permalink to this headline">¶</a></h3>
 <p>The following sample configuration shows how to set the public key pin for the two domains Gini
-Pay API lib uses by default (<code class="docutils literal notranslate"><span class="pre">pay-api.gini.net</span></code> and <code class="docutils literal notranslate"><span class="pre">user.gini.net</span></code>). It should be saved under
+Pay API Library uses by default (<code class="docutils literal notranslate"><span class="pre">pay-api.gini.net</span></code> and <code class="docutils literal notranslate"><span class="pre">user.gini.net</span></code>). It should be saved under
 <code class="docutils literal notranslate"><span class="pre">res/xml/network_security_config.xml</span></code>:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;network-security-config&gt;</span>
@@ -324,7 +324,7 @@ a public key named <code class="docutils literal notranslate"><span class="pre">
         <a href="common-tasks.html" class="btn btn-neutral float-right" title="Working with Tasks">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral" title="Gini Pay API lib Documentation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral" title="Gini Pay API Library Documentation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
