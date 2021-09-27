@@ -45,8 +45,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Gini Pay API lib for Android'
-copyright = u'2014-2015, Gini GmbH'
+project = u'Gini Pay API Library for Android'
+copyright = u'2014-2021, Gini GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

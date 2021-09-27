@@ -4,8 +4,8 @@
 Working with Tasks
 ==================
 
-The Gini Pay API lib makes heavy use of the concept of tasks. Tasks are convenient when you want to
-do execute work in succession, each one waiting for the previous to finish (comparable to
+The Gini Pay API Library makes heavy use of the concept of tasks. Tasks are convenient when you want to
+execute work in succession, each one waiting for the previous to finish (comparable to
 Promises in JavaScript). This is a common pattern when working with Gini's remote API. The Gini
 Android SDK uses `facebook's task implementation, which is called bolts
 <https://github.com/BoltsFramework/Bolts-Android>`_. Before you continue reading this guide, we
@@ -19,7 +19,7 @@ As the key aspect of the Gini API is to provide information extraction for analy
 API is mainly built around the concept of documents. A document can be any written representation of
 information such as invoices, reminders, contracts and so on.
 
-The Gini Pay API lib supports creating documents from images, PDFs or UTF-8 encoded text. Images are
+The Gini Pay API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
 usually a picture of a paper document which was taken with the device's camera.
 
 The following example shows how to create a new document from a byte array containing a JPEG image.
@@ -49,11 +49,6 @@ The following example shows how to create a new document from a byte array conta
 Each page of a document needs to uploaded as a partial document. In addition documents consisting of
 one page also should be uploaded as a partial document.
 
-.. warning::
-
-    If you are using the Gini Accounting API, then partial documents are not supported. Use the
-    `DocumentTaskManager#createDocument()` methods instead.
-
 .. note::
 
     PDFs and UTF-8 encoded text should also be uploaded as partial documents. Even though PDFs might
@@ -74,7 +69,7 @@ Setting the document type hint
 To easily set the document type hint we introduced the ``DocumentType`` enum. It is safer and easier
 to use than a ``String``. For more details about the document type hints see the `Document Type
 Hints in the Gini API documentation
-<http://developer.gini.net/gini-api/html/documents.html#document-type-hints>`_.
+<https://pay-api.gini.net/documentation/#document-types>`_.
 
 .. _getting-extractions:
 
@@ -86,12 +81,6 @@ extractions for the document. *Composite documents* consist of
 previously created *partial documents*. You can consider creating partial documents analogous to
 uploading pages of a document and creating a composite document analogous to processing those pages
 as a single document.
-
-.. warning::
-
-    If you are using the Gini Accounting API, then composite documents are not supported. You need to
-    use `DocumentTaskManager#pollDocument()` and then `DocumentTaskManager#getExtractions()` without
-    creating a composite document.
 
 Before retrieving extractions you need to create a composite document from your partial documents.
 The ``createCompositeDocument()`` method accepts either a ``List`` of partial ``Documents`` or a
@@ -200,7 +189,7 @@ to Gini.
 Handling errors
 ===================
 
-Currently, the Gini Pay API lib doesn't have intelligent error-handling mechanisms. All errors that
+Currently, the Gini Pay API Library doesn't have intelligent error-handling mechanisms. All errors that
 occur during executing a task are handed over transparently. You can react on those errors in the
 ``onError(...)`` method of the task. We may add better error-handling mechanisms in the future. At
 the moment we recommend checking the network status when a task failed and retrying the task.

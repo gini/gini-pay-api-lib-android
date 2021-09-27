@@ -28,5 +28,5 @@ cd gh-pages
 touch .nojekyll
 git add -u
 git add .
-git diff --quiet --exit-code --cached || git commit -a -m 'Gini Pay API lib docs'
+git diff --quiet --exit-code --cached || git commit -a -m 'Gini Pay API Library docs'
 git push
