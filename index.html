@@ -68,7 +68,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="#" id="gini-logo">gini API</a>
+        <a href="#" id="gini-logo">
+          <img src="_static/logo.svg" />
+        </a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -153,6 +155,26 @@
             
   <div class="section" id="gini-pay-api-library-documentation">
 <h1>Gini Pay API Library Documentation<a class="headerlink" href="#gini-pay-api-library-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Deprecation Notice</strong></p>
+<p>The Gini Pay API Library was split into industry specific API libraries: <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/">Gini Bank API Library</a> and <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-api-library/">Gini Health API Library</a>.</p>
+<p>This library won’t be developed further and we kindly ask you to switch to one of the new libraries:</p>
+<ul class="last simple">
+<li><dl class="first docutils">
+<dt>Gini Bank API Library</dt>
+<dd>If you have a banking related app you should switch to the Gini Bank API Library. Migration entails only a few
+steps which you can find in this <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/migrate-from-pay-api-lib.md">migration guide</a>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Gini Health API Library</dt>
+<dd>If you have a health insurance related app you should switch to the Gini Health API Library. Migration entails
+only a few steps which you can find in this <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-api-library/migrate-from-pay-api-lib.md">migration guide</a>.</dd>
+</dl>
+</li>
+</ul>
+</div>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Gini provides an information extraction system for analyzing documents (e. g. invoices or
